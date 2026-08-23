@@ -1,0 +1,36 @@
+[plugin]
+id = "steam-game-name-zh"
+name = "Steam 游戏名中文化"
+version = "0.1.0"
+author = "SteamGameName contributors"
+description = "使用 AppID 将 Steam 游戏库左侧列表中的游戏名显示为简体中文或双语。"
+
+[assets]
+resources = ["data/translations.zh-CN.json"]
+
+[backend]
+entry = "backend/main.lua"
+sources = ["backend/**/*.lua"]
+
+[frontend]
+entry = "frontend/index.tsx"
+
+[compiler]
+output_path = ".millennium/dist"
+
+[dev]
+auto_restart = true
+reload_steamui_when = "both"
+
+[inspect]
+depth = 4
+colors = true
+show_hidden = false
+
+[logger]
+padding = 0
+backend_prefix = "SteamGameName BCK"
+frontend_prefix = "SteamGameName FRT"
+
+[patches]
+debug = false

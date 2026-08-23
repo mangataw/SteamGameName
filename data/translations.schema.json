@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/steam-game-name-zh/translations.schema.json",
+  "title": "Steam 游戏名简体中文词库",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "games"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "games": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[1-9][0-9]*$" },
+      "additionalProperties": { "type": "string", "minLength": 1 }
+    }
+  }
+}
+

@@ -1,0 +1,22 @@
+name: Bug 报告
+description: 报告名称显示、刷新或兼容性问题
+body:
+  - type: input
+    id: steam-version
+    attributes:
+      label: Steam 版本
+    validations:
+      required: true
+  - type: input
+    id: millennium-version
+    attributes:
+      label: Millennium 版本
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: 问题与复现步骤
+      description: 请勿粘贴账户信息、Cookie、令牌或含用户名的完整路径。
+    validations:
+      required: true

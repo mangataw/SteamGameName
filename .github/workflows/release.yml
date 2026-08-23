@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.19.0
+      - run: pnpm install --frozen-lockfile
+      - name: Inject release source
+        shell: pwsh
+        run: |
+          $env:PLUGIN_VERSION = "${{ github.ref_name }}".TrimStart('v')
+          pnpm exec tsx scripts/generate-source-config.ts
+      - run: pnpm run check
+      - run: pnpm run build
+      - name: Package
+        shell: pwsh
+        run: |
+          $env:PLUGIN_VERSION = "${{ github.ref_name }}".TrimStart('v')
+          pnpm exec tsx scripts/package-release.ts
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/*.zip
+            release/*.sha256

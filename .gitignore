@@ -1,0 +1,11 @@
+node_modules/
+.millennium/
+dist/
+release/
+coverage/
+cache/
+config/
+.template-upstream/
+*.log
+
+.millennium/lsp/

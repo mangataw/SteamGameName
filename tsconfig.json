@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "target": "ES2022",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "jsx": "react-jsx",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noEmit": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "typeRoots": [
+      ".millennium/types",
+      "node_modules/@types"
+    ],
+    "paths": {
+      "millennium": [
+        ".millennium/lsp/ts"
+      ]
+    }
+  },
+  "include": [
+    "frontend",
+    "scripts",
+    "tests",
+    ".millennium/**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".template-upstream"
+  ]
+}

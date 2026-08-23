@@ -1,0 +1,2 @@
+function V(e){let t=observe(()=>{let{item:t}=e;return{display_name:t.display_name,display_name_elanguage:t.display_name_elanguage,display_status:t.display_status,active_beta:t.active_beta,status_percentage:t.status_percentage,remote_item:!t.local,update_available_but_disabled_by_app:t.disabled}}),r=t.display_name;t.active_beta&&(r=r+" ["+t.active_beta+"]");const n=t.display_name_elanguage;let a=jsx("span",{children:r});return a}
+
