@@ -1,26 +1,33 @@
 {
   "name": "steam-game-name-zh",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@11.19.0",
   "scripts": {
     "dev": "starlight watch",
-    "build": "starlight pack --release",
+    "build": "tsx scripts/prepare-build.ts && starlight pack --release",
     "prepare": "starlight lsp",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "check:lua": "tsx scripts/check-lua.ts",
+    "test:lua": "node scripts/run-lua-tests.cjs",
+    "test": "vitest run && pnpm run test:lua",
     "validate:catalog": "tsx scripts/validate-catalog.ts data/translations.zh-CN.json",
-    "check": "pnpm run typecheck && pnpm run test && pnpm run validate:catalog",
-    "package": "tsx scripts/package-release.ts"
+    "check": "pnpm run typecheck && pnpm run check:lua && pnpm run test && pnpm run validate:catalog",
+    "verify:star": "starlight verify .millennium/dist/steam-game-name-zh.star",
+    "package": "tsx scripts/package-release.ts",
+    "verify:package": "tsx scripts/verify-release.ts"
   },
   "devDependencies": {
     "@steambrew/starlight": "1.1.3",
+    "@types/luaparse": "0.2.12",
     "@types/node": "24.3.0",
     "@types/react": "19.1.1",
     "@types/react-dom": "19.1.1",
     "ajv": "8.17.1",
+    "fengari": "0.1.4",
     "fflate": "0.8.2",
+    "luaparse": "0.3.1",
     "tsx": "4.20.5",
     "typescript": "5.9.2",
     "vitest": "3.2.4"

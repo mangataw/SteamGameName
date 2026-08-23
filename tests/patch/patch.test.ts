@@ -1,25 +1,61 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
+import { parse } from "luaparse";
 import { describe, expect, it } from "vitest";
 
-const fixture = readFileSync("tests/patch/library-sidebar.fixture.js", "utf8");
-const signature = /function \w+\(\w+\)\{let \w+=\(0,\w+\.\w+\)\(\(\)=>\{let\{item:\w+\}=\w+;return\{display_name:\w+\.display_name,display_name_elanguage:\w+\.display_name_elanguage,display_status:\w+\.display_status,active_beta:\w+\.active_beta,status_percentage:\w+\.status_percentage,remote_item:[^,}]+,update_available_but_disabled_by_app:[^}]+\}\}\),\w+=\w+\.display_name;\w+\.active_beta&&\(\w+=\w+\+" \["\+\w+\.active_beta\+"\]"\);/g;
-const transform = /(function \w+\((\w+)\)\{let \w+=\(0,\w+\.\w+\)\(\(\)=>\{let\{item:\w+\}=\w+;return\{display_name:\w+\.display_name,display_name_elanguage:\w+\.display_name_elanguage,display_status:\w+\.display_status,active_beta:\w+\.active_beta,status_percentage:\w+\.status_percentage,remote_item:[^,}]+,update_available_but_disabled_by_app:[^}]+\}\}\),)(\w+)=(\w+\.display_name);/g;
+type LuaNode = { type?: string; key?: { name?: string }; value?: unknown; [key: string]: unknown };
 
-describe("library sidebar patch guard", () => {
-  it("matches the supported sidebar fixture exactly once", () => expect([...fixture.matchAll(signature)]).toHaveLength(1));
-  it("applies one transform without RE2-incompatible pattern backreferences", () => {
-    const matches = [...fixture.matchAll(transform)];
-    expect(matches).toHaveLength(1);
-    expect(matches[0]?.slice(1)).toEqual([expect.any(String), "e", "r", "t.display_name"]);
+function productionString(fieldName: string): string {
+  const ast = parse(readFileSync("backend/patches.lua", "utf8"), {
+    comments: false,
+    encodingMode: "x-user-defined",
+    luaVersion: "5.3",
+  }) as unknown as LuaNode;
+  const matches: string[] = [];
+  const visit = (node: unknown): void => {
+    if (!node || typeof node !== "object") return;
+    const candidate = node as LuaNode;
+    if (candidate.type === "TableKeyString" && candidate.key?.name === fieldName) {
+      const value = candidate.value as LuaNode;
+      if (value.type === "StringLiteral" && typeof value.value === "string") matches.push(value.value);
+    }
+    for (const value of Object.values(candidate)) {
+      if (Array.isArray(value)) value.forEach(visit);
+      else if (value && typeof value === "object") visit(value);
+    }
+  };
+  visit(ast);
+  expect(matches, `production field ${fieldName}`).toHaveLength(1);
+  return matches[0]!;
+}
+
+const signature = new RegExp(productionString("find"), "g");
+const transform = new RegExp(productionString("match"), "g");
+const replacement = productionString("replace")
+  .replaceAll("#{{self}}", "plugin")
+  .replace(/\\([1-9])/gu, "$$$1");
+const fixtures = readdirSync("tests/patch")
+  .filter((name) => name.endsWith(".fixture.js"))
+  .map((name) => [name, readFileSync(`tests/patch/${name}`, "utf8")] as const);
+
+describe("production library sidebar patch", () => {
+  it.each(fixtures)("matches %s exactly once", (_name, fixture) => {
+    expect([...fixture.matchAll(signature)]).toHaveLength(1);
+    expect([...fixture.matchAll(transform)]).toHaveLength(1);
   });
-  it("uses the initialized Steam name instead of the assignment target", () => {
-    const patched = fixture.replace(transform, "$1$3=plugin?.gameNames?.render($2.item.appid,$4)??$4;");
-    expect(patched).toContain("r=plugin?.gameNames?.render(e.item.appid,t.display_name)??t.display_name;");
-    expect(patched).not.toMatch(/r=[^;]*render\([^;]*,r\)\?\?r/);
+
+  it.each(fixtures)("transforms %s once and is idempotent", (_name, fixture) => {
+    const patched = fixture.replace(transform, replacement);
+    expect(patched).toContain("plugin?.gameNames?.render(");
+    expect([...patched.matchAll(transform)]).toHaveLength(0);
+    expect(patched.replace(transform, replacement)).toBe(patched);
   });
+
   it.each([
     'function Details(e){return jsx("h1",{children:e.display_name})}',
     'function Search(e){return jsx("span",{children:e.name})}',
-    fixture.replace("display_name_elanguage", "language"),
-  ])("does not match unrelated or structurally changed code", (source) => expect([...source.matchAll(signature)]).toHaveLength(0));
+    fixtures[0]![1].replace("display_name_elanguage", "language"),
+  ])("does not touch unrelated or structurally changed UI", (source) => {
+    expect([...source.matchAll(signature)]).toHaveLength(0);
+    expect(source.replace(transform, replacement)).toBe(source);
+  });
 });

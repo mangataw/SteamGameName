@@ -17,7 +17,8 @@ jobs:
         with:
           version: 11.19.0
       - run: pnpm install --frozen-lockfile
-      - run: pnpm run typecheck
-      - run: pnpm run test
-      - run: pnpm run validate:catalog
+      - run: pnpm run check
       - run: pnpm run build
+      - run: pnpm run verify:star
+      - run: pnpm run package
+      - run: pnpm run verify:package -- release/steam-game-name-zh-v0.1.1.zip

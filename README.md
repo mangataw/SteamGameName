@@ -25,12 +25,12 @@ pnpm run build
 
 1. 安装并启动 Millennium。
 2. 从本仓库 GitHub Releases 下载 ZIP，并核对同名 `.sha256` 文件。
-3. 将 ZIP 中的 `steam-game-name-zh` 文件放入 Steam 的 `plugins` 目录。
+3. 将 ZIP 中的 `steam-game-name-zh.star` 文件放入 Steam 的 `plugins` 目录。
 4. 重启 Steam，在 Millennium 的插件设置中启用“Steam 游戏名中文化”。
 
 禁用或删除插件后，Hooking API 不再应用补丁，Steam 将显示原始名称；插件不会修改 Steam 清单或数据库。
 
-当前 `v0.1.0` 是预览版。自动化检查已通过，但发布稳定版前仍需完成 [项目状态与验收清单](docs/PROJECT_STATUS.md) 中的 Steam/Millennium 真机矩阵。
+当前 `v0.1.1` 是预览版。自动化检查已通过，但发布稳定版前仍需完成 [项目状态与验收清单](docs/PROJECT_STATUS.md) 中的 Steam/Millennium 真机矩阵。
 
 ## 发布与维护
 

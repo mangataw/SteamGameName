@@ -26,11 +26,13 @@ jobs:
           pnpm exec tsx scripts/generate-source-config.ts
       - run: pnpm run check
       - run: pnpm run build
+      - run: pnpm run verify:star
       - name: Package
         shell: pwsh
         run: |
           $env:PLUGIN_VERSION = "${{ github.ref_name }}".TrimStart('v')
           pnpm exec tsx scripts/package-release.ts
+          pnpm run verify:package -- "release/steam-game-name-zh-${{ github.ref_name }}.zip"
       - uses: softprops/action-gh-release@v2
         with:
           files: |
