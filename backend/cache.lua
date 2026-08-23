@@ -1,5 +1,5 @@
 local fs         = require("fs")
-local json       = require("json").safe
+local json       = require("json_safe")
 local millennium = require("millennium")
 
 local cache = {}
@@ -62,4 +62,3 @@ function cache.atomic_write_json(path, value, verifier)
 end
 
 return cache
-

@@ -1,7 +1,7 @@
 local cache      = require("cache")
 local datetime   = require("datetime")
 local http       = require("http")
-local json       = require("json").safe
+local json       = require("json_safe")
 local logger     = require("logger")
 local millennium = require("millennium")
 local source     = require("source_config")
@@ -146,4 +146,3 @@ function catalog.refresh(force)
 end
 
 return catalog
-

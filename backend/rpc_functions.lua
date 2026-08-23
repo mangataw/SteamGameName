@@ -1,5 +1,5 @@
 local catalog  = require("catalog")
-local json     = require("json").safe
+local json     = require("json_safe")
 local settings = require("settings")
 
 local function result(data, err)
@@ -35,4 +35,3 @@ function set_display_mode(mode)
     local data, err = settings.set_mode(mode)
     return result(data, err)
 end
-
