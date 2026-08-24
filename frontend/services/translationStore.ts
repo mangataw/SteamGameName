@@ -25,6 +25,7 @@ let snapshot: TranslationSnapshot = {
 };
 const listeners = new Set<() => void>();
 let settingsEpoch = 0;
+let patchCompatibilityReported = false;
 
 function publish(next: Omit<TranslationSnapshot, "version">): void {
   snapshot = { ...next, version: snapshot.version + 1 };
@@ -47,14 +48,20 @@ export const translationStore = {
   async reload(): Promise<void> {
     await this.initialize();
   },
+  async reportPatchCompatible(): Promise<void> {
+    if (patchCompatibilityReported) return;
+    patchCompatibilityReported = true;
+    await backendService.reportPatchCompatible();
+    await this.reload();
+  },
   async setMode(mode: DisplayMode): Promise<void> {
     const requestEpoch = ++settingsEpoch;
     const settings = await backendService.setDisplayMode(mode);
     if (requestEpoch !== settingsEpoch) return;
     publish({ catalog: snapshot.catalog, status: snapshot.status, settings });
   },
-  async refresh(): Promise<void> {
-    await backendService.refreshCatalog(true);
+  async refresh(force = true): Promise<void> {
+    await backendService.refreshCatalog(force);
     await this.reload();
   },
 };

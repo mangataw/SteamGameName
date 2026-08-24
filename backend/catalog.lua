@@ -12,7 +12,7 @@ local MAX_BYTES = 5 * 1024 * 1024
 local current = { schemaVersion = 1, games = {} }
 local status = {
     source = "bundled", state = "bundled", entryCount = 0, etag = nil, lastModified = nil,
-    lastCheckedAt = nil, lastSuccessfulUpdateAt = nil, error = nil, patchCompatible = true,
+    lastCheckedAt = nil, lastSuccessfulUpdateAt = nil, error = nil, patchCompatible = false,
 }
 local metadata = {}
 local refreshing = false
@@ -73,7 +73,10 @@ end
 
 function catalog.get() return current end
 function catalog.get_status() return status end
-function catalog.set_patch_compatible(value) status.patchCompatible = value == true end
+function catalog.mark_patch_compatible()
+    status.patchCompatible = true
+    return status
+end
 
 function catalog.refresh(force)
     if refreshing then return nil, "refresh_in_progress" end

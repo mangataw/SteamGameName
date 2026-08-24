@@ -23,22 +23,37 @@ function objectEnvelope(data: unknown): object {
 }
 
 const setDisplayMode = vi.fn(async (mode: string) => envelope({ schemaVersion: 1, displayMode: mode }));
+const refreshCatalog = vi.fn(async () => envelope(status));
 
 beforeEach(async () => {
   setDisplayMode.mockClear();
+  refreshCatalog.mockClear();
   Object.assign(globalThis, {
     backend: {
       get_catalog: async () => envelope(catalog),
       get_catalog_status: async () => envelope(status),
+      report_patch_compatible: async () => envelope({ ...status, patchCompatible: true }),
       get_settings: async () => envelope({ schemaVersion: 1, displayMode: "bilingual" }),
       set_display_mode: setDisplayMode,
-      refresh_catalog: async () => envelope(status),
+      refresh_catalog: refreshCatalog,
     },
   });
   await translationStore.initialize();
 });
 
 describe("translationStore display mode", () => {
+  it("uses a non-forced refresh for the automatic startup check", async () => {
+    await translationStore.refresh(false);
+
+    expect(refreshCatalog).toHaveBeenCalledWith(false);
+  });
+
+  it("forces user-requested refreshes by default", async () => {
+    await translationStore.refresh();
+
+    expect(refreshCatalog).toHaveBeenCalledWith(true);
+  });
+
   it("publishes the persisted mode to every subscriber", async () => {
     const listener = vi.fn();
     const unsubscribe = translationStore.subscribe(listener);
@@ -80,6 +95,7 @@ describe("translationStore display mode", () => {
       backend: {
         get_catalog: async () => objectEnvelope(catalog),
         get_catalog_status: async () => objectEnvelope(status),
+        report_patch_compatible: async () => objectEnvelope({ ...status, patchCompatible: true }),
         get_settings: async () => objectEnvelope({ schemaVersion: 1, displayMode: persistedMode }),
         set_display_mode: async (mode: string) => {
           persistedMode = mode;

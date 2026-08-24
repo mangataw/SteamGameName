@@ -16,6 +16,10 @@ function get_catalog() return result(catalog.get()) end
 function get_catalog_status() return result(catalog.get_status()) end
 
 ---@ffi
+---@return string
+function report_patch_compatible() return result(catalog.mark_patch_compatible()) end
+
+---@ffi
 ---@param force boolean
 ---@return string
 function refresh_catalog(force)

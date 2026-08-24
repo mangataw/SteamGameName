@@ -25,6 +25,9 @@ export const backendService = {
   async getStatus(): Promise<CatalogStatus> {
     return decode(await backend.get_catalog_status());
   },
+  async reportPatchCompatible(): Promise<CatalogStatus> {
+    return decode(await backend.report_patch_compatible());
+  },
   async getSettings(): Promise<PluginSettings> {
     return decode(await backend.get_settings());
   },

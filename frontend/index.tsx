@@ -13,6 +13,8 @@ export const gameNames = {
     return formatDisplayName(appId, originalName, snapshot.catalog, snapshot.settings.displayMode);
   },
   render(appId: number | string, originalName: string, activeBeta?: string) {
+    void translationStore.reportPatchCompatible()
+      .catch((error: unknown) => console.error("Failed to report sidebar patch compatibility", error));
     return createElement(TranslatedGameName, { appId, originalName, activeBeta });
   },
 };
@@ -24,6 +26,8 @@ export function catalogUpdated(): boolean {
 }
 
 export default definePlugin(() => {
-  void translationStore.initialize().catch((error: unknown) => console.error("Failed to initialize Steam game translations", error));
+  void translationStore.initialize()
+    .then(() => translationStore.refresh(false))
+    .catch((error: unknown) => console.error("Failed to initialize or refresh Steam game translations", error));
   return { title: "Steam 游戏名中文化", icon: <span>中</span>, content: <SettingsContent /> };
 });

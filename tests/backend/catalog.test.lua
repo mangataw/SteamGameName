@@ -83,6 +83,8 @@ test("no cache uses bundled catalog", function()
     catalog.initialize()
     equal(catalog.get_status().source, "bundled")
     equal(catalog.get_status().entryCount, 1)
+    equal(catalog.get_status().patchCompatible, false)
+    equal(catalog.mark_patch_compatible().patchCompatible, true)
 end)
 
 test("damaged cache is ignored", function()

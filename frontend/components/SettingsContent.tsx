@@ -16,6 +16,12 @@ const stateLabels = {
   error: "错误",
 } as const;
 
+const sourceLabels = {
+  bundled: "内置",
+  cache: "缓存",
+  remote: "远程",
+} as const;
+
 function statusErrorText(value: string | null): string | null {
   if (!value) return null;
   if (value === "remote_catalog_unconfigured") return "当前构建未配置远程词库地址。";
@@ -53,6 +59,10 @@ export function SettingsContent() {
   const { status } = snapshot;
   const statusError = statusErrorText(status.error);
   const etag = status.etag ? status.etag.replace(/^W\//, "").replaceAll('"', "").slice(0, 10) : "无";
+  const state = status.state === "latest" && status.source === "cache"
+    ? "最新（已联网确认）"
+    : stateLabels[status.state];
+  const source = sourceLabels[status.source];
   return (
     <DialogControlsSection>
       <Field
@@ -70,7 +80,7 @@ export function SettingsContent() {
           onChange={(option) => void changeMode(option.data as DisplayMode)}
         />
       </Field>
-      <Field label={`词库状态：${stateLabels[status.state]}`} description={`来源 ${status.source} · ${status.entryCount} 条 · ETag ${etag}`} />
+      <Field label={`词库状态：${state}`} description={`来源 ${source} · ${status.entryCount} 条 · ETag ${etag}`} />
       <Field label="最后成功更新" description={timeText(status.lastModified ?? status.lastSuccessfulUpdateAt)} />
       <Field label="上次检查" description={timeText(status.lastCheckedAt)} />
       {!status.patchCompatible && <Field label="兼容性提示" description="当前 Steam 客户端左栏结构暂不兼容，插件已安全停用名称补丁。" />}
