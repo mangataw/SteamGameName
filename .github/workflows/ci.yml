@@ -21,4 +21,8 @@ jobs:
       - run: pnpm run build
       - run: pnpm run verify:star
       - run: pnpm run package
-      - run: pnpm run verify:package -- release/steam-game-name-zh-v0.1.1.zip
+      - name: Verify package
+        shell: pwsh
+        run: |
+          $version = (Get-Content package.json | ConvertFrom-Json).version
+          pnpm run verify:package -- "release/steam-game-name-zh-v$version.zip"

@@ -1,4 +1,5 @@
 import { backendService } from "./backend";
+import bundledCatalogJson from "../../data/translations.zh-CN.json";
 import type { CatalogStatus, TranslationCatalog } from "../types/catalog";
 import type { DisplayMode, PluginSettings } from "../types/settings";
 
@@ -9,15 +10,18 @@ export interface TranslationSnapshot {
   version: number;
 }
 
-const emptyCatalog: TranslationCatalog = { schemaVersion: 1, games: {} };
+const bundledCatalog = bundledCatalogJson as TranslationCatalog;
 let snapshot: TranslationSnapshot = {
-  catalog: emptyCatalog,
+  catalog: bundledCatalog,
   settings: { schemaVersion: 1, displayMode: "bilingual" },
   status: {
     source: "bundled", state: "内置", entryCount: 0, etag: null, lastModified: null,
     lastCheckedAt: null, lastSuccessfulUpdateAt: null, error: null, patchCompatible: true,
   },
-  version: 0,
+  // The frontend export can be called before backend RPC initialization. Start
+  // with the bundled catalog so that first call is useful without embedding the
+  // complete catalog in the Steam UI patch string.
+  version: 1,
 };
 const listeners = new Set<() => void>();
 

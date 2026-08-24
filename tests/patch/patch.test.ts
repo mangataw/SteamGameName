@@ -41,13 +41,18 @@ const bundledCatalog = JSON.parse(readFileSync("data/translations.zh-CN.json", "
 };
 
 describe("production library sidebar patch", () => {
-  it("keeps the synchronous bootstrap catalog aligned with the bundled catalog", () => {
+  it("keeps the synchronous bootstrap catalog small and sourced from bundled values", () => {
     const source = productionString("replace");
     const start = source.indexOf('{"10":');
     const end = source.indexOf("}[String(", start);
     expect(start).toBeGreaterThanOrEqual(0);
     expect(end).toBeGreaterThan(start);
-    expect(JSON.parse(source.slice(start, end + 1))).toEqual(bundledCatalog.games);
+    const bootstrapCatalog = JSON.parse(source.slice(start, end + 1)) as Record<string, string>;
+    expect(Object.keys(bootstrapCatalog).length).toBeLessThanOrEqual(8);
+    expect(bootstrapCatalog).toEqual(Object.fromEntries(
+      Object.keys(bootstrapCatalog).map((appId) => [appId, bundledCatalog.games[appId]]),
+    ));
+    expect(new TextEncoder().encode(source).byteLength).toBeLessThan(1024);
   });
 
   it.each(fixtures)("matches %s exactly once", (_name, fixture) => {

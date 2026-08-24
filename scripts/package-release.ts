@@ -2,10 +2,11 @@ import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import { basename, join } from "node:path";
 import { createHash } from "node:crypto";
 import { zipSync } from "fflate";
+import packageMetadata from "../package.json" with { type: "json" };
 
 const canonicalName = "steam-game-name-zh.star";
 const input = process.argv[2] ?? join(".millennium", "dist", canonicalName);
-const version = process.env.PLUGIN_VERSION ?? "0.1.4";
+const version = process.env.PLUGIN_VERSION ?? packageMetadata.version;
 const outputDirectory = "release";
 const files: Record<string, Uint8Array> = {};
 
