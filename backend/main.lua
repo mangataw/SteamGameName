@@ -6,8 +6,10 @@ local patches    = require("patches")
 require("rpc_functions")
 
 local function on_load()
-    millennium.ready()
     catalog.initialize()
+    -- Do not expose the RPC surface until the bundled/cache catalog is ready.
+    -- Otherwise the frontend can permanently snapshot the initial empty catalog.
+    millennium.ready()
     logger:info("Loaded with Millennium " .. millennium.version())
 end
 

@@ -3,9 +3,15 @@ import { createElement } from "react";
 import { SettingsContent } from "./components/SettingsContent";
 import { TranslatedGameName } from "./components/TranslatedGameName";
 import { translationStore } from "./services/translationStore";
+import { formatDisplayName } from "./translation/formatDisplayName";
 
 /** @ffi */
 export const gameNames = {
+  format(appId: number | string, originalName: string) {
+    const snapshot = translationStore.getSnapshot();
+    if (snapshot.version === 0) return null;
+    return formatDisplayName(appId, originalName, snapshot.catalog, snapshot.settings.displayMode);
+  },
   render(appId: number | string, originalName: string) {
     return createElement(TranslatedGameName, { appId, originalName });
   },

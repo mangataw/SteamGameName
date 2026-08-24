@@ -5,7 +5,7 @@ import { zipSync } from "fflate";
 
 const canonicalName = "steam-game-name-zh.star";
 const input = process.argv[2] ?? join(".millennium", "dist", canonicalName);
-const version = process.env.PLUGIN_VERSION ?? "0.1.1";
+const version = process.env.PLUGIN_VERSION ?? "0.1.4";
 const outputDirectory = "release";
 const files: Record<string, Uint8Array> = {};
 

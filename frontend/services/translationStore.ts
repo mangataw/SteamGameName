@@ -50,4 +50,3 @@ export const translationStore = {
     await this.reload();
   },
 };
-

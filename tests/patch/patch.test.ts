@@ -36,8 +36,20 @@ const replacement = productionString("replace")
 const fixtures = readdirSync("tests/patch")
   .filter((name) => name.endsWith(".fixture.js"))
   .map((name) => [name, readFileSync(`tests/patch/${name}`, "utf8")] as const);
+const bundledCatalog = JSON.parse(readFileSync("data/translations.zh-CN.json", "utf8")) as {
+  games: Record<string, string>;
+};
 
 describe("production library sidebar patch", () => {
+  it("keeps the synchronous bootstrap catalog aligned with the bundled catalog", () => {
+    const source = productionString("replace");
+    const start = source.indexOf('{"10":');
+    const end = source.indexOf("}[String(", start);
+    expect(start).toBeGreaterThanOrEqual(0);
+    expect(end).toBeGreaterThan(start);
+    expect(JSON.parse(source.slice(start, end + 1))).toEqual(bundledCatalog.games);
+  });
+
   it.each(fixtures)("matches %s exactly once", (_name, fixture) => {
     expect([...fixture.matchAll(signature)]).toHaveLength(1);
     expect([...fixture.matchAll(transform)]).toHaveLength(1);
@@ -45,7 +57,9 @@ describe("production library sidebar patch", () => {
 
   it.each(fixtures)("transforms %s once and is idempotent", (_name, fixture) => {
     const patched = fixture.replace(transform, replacement);
-    expect(patched).toContain("plugin?.gameNames?.render(");
+    expect(patched).toContain("plugin?.gameNames?.format(");
+    expect(patched).toContain('"220":"\\u534a\\u8870\\u671f 2"');
+    expect(() => new Function(patched)).not.toThrow();
     expect([...patched.matchAll(transform)]).toHaveLength(0);
     expect(patched.replace(transform, replacement)).toBe(patched);
   });

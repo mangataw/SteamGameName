@@ -15,4 +15,3 @@ export function TranslatedGameName({ appId, originalName }: Props) {
   );
   return <>{formatDisplayName(appId, originalName, snapshot.catalog, snapshot.settings.displayMode)}</>;
 }
-

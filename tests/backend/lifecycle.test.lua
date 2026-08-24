@@ -1,4 +1,5 @@
 local ready_count, initialize_count, refresh_count, log_count = 0, 0, 0, 0
+local load_order = {}
 
 local function install(name, value)
     package.loaded[name] = nil
@@ -6,7 +7,10 @@ local function install(name, value)
 end
 
 install("catalog", {
-    initialize = function() initialize_count = initialize_count + 1 end,
+    initialize = function()
+        initialize_count = initialize_count + 1
+        load_order[#load_order + 1] = "catalog"
+    end,
     refresh = function(force)
         assert(force == false)
         refresh_count = refresh_count + 1
@@ -17,7 +21,10 @@ install("logger", {
     warn = function() error("unexpected warning") end,
 })
 install("millennium", {
-    ready = function() ready_count = ready_count + 1 end,
+    ready = function()
+        ready_count = ready_count + 1
+        load_order[#load_order + 1] = "ready"
+    end,
     version = function() return "test" end,
 })
 install("rpc_functions", true)
@@ -30,6 +37,7 @@ first.on_load()
 first.on_frontend_loaded()
 first.on_unload()
 assert(ready_count == 1 and initialize_count == 1 and refresh_count == 1, "lifecycle callbacks must run once")
+assert(load_order[1] == "catalog" and load_order[2] == "ready", "catalog must initialize before frontend RPC is marked ready")
 assert(log_count == 2, "load and unload must both be logged")
 
 package.loaded.main = nil

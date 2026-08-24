@@ -1,6 +1,6 @@
 {
   "name": "steam-game-name-zh",
-  "version": "0.1.1",
+  "version": "0.1.4",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@11.19.0",
@@ -12,6 +12,7 @@
     "check:lua": "tsx scripts/check-lua.ts",
     "test:lua": "node scripts/run-lua-tests.cjs",
     "test": "vitest run && pnpm run test:lua",
+    "diagnose:patch": "tsx scripts/diagnose-patch.ts",
     "validate:catalog": "tsx scripts/validate-catalog.ts data/translations.zh-CN.json",
     "check": "pnpm run typecheck && pnpm run check:lua && pnpm run test && pnpm run validate:catalog",
     "verify:star": "starlight verify .millennium/dist/steam-game-name-zh.star",
