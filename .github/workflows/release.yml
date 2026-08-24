@@ -35,6 +35,7 @@ jobs:
           pnpm run verify:package -- "release/steam-game-name-zh-${{ github.ref_name }}.zip"
       - uses: softprops/action-gh-release@v2
         with:
+          prerelease: ${{ contains(github.ref_name, '-') }}
           files: |
             release/*.zip
             release/*.sha256
