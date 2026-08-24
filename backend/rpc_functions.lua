@@ -4,7 +4,7 @@ local settings = require("settings")
 
 local function result(data, err)
     local payload = { ok = err == nil, data = data, error = err }
-    return json.encode(payload) or '{"ok":false,"data":null,"error":"json_encode_failed"}'
+    return json.encode_ascii(payload) or '{"ok":false,"data":null,"error":"json_encode_failed"}'
 end
 
 ---@ffi

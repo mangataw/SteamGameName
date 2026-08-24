@@ -62,7 +62,8 @@ describe("production library sidebar patch", () => {
 
   it.each(fixtures)("transforms %s once and is idempotent", (_name, fixture) => {
     const patched = fixture.replace(transform, replacement);
-    expect(patched).toContain("plugin?.gameNames?.format(");
+    expect(patched).toContain("plugin?.gameNames?.render(");
+    expect(patched).toMatch(/\.render\([^,]+\.item\.appid,\w+\.display_name,\w+\.active_beta\)/u);
     expect(patched).toContain('"220":"\\u534a\\u8870\\u671f 2"');
     expect(() => new Function(patched)).not.toThrow();
     expect([...patched.matchAll(transform)]).toHaveLength(0);

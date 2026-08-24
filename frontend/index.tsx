@@ -12,8 +12,8 @@ export const gameNames = {
     if (snapshot.version === 0) return null;
     return formatDisplayName(appId, originalName, snapshot.catalog, snapshot.settings.displayMode);
   },
-  render(appId: number | string, originalName: string) {
-    return createElement(TranslatedGameName, { appId, originalName });
+  render(appId: number | string, originalName: string, activeBeta?: string) {
+    return createElement(TranslatedGameName, { appId, originalName, activeBeta });
   },
 };
 

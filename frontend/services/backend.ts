@@ -7,8 +7,13 @@ interface RpcEnvelope<T> {
   error: string | null;
 }
 
-function decode<T>(payload: string): T {
-  const result = JSON.parse(payload) as RpcEnvelope<T>;
+function decode<T>(payload: unknown): T {
+  // Depending on the Millennium/Starlight bridge version, an FFI JSON return
+  // can arrive as the original string or as an already decoded object.
+  const result = (typeof payload === "string" ? JSON.parse(payload) : payload) as RpcEnvelope<T>;
+  if (!result || typeof result !== "object" || typeof result.ok !== "boolean") {
+    throw new Error("后端返回格式无效");
+  }
   if (!result.ok || result.data === null) throw new Error(result.error ?? "后端返回未知错误");
   return result.data;
 }
@@ -30,4 +35,3 @@ export const backendService = {
     return decode(await backend.refresh_catalog(force));
   },
 };
-

@@ -1,10 +1,12 @@
 local millennium = require("millennium")
 
 local settings = {}
-local allowed = { bilingual = true, chinese = true, original = true }
+local allowed = { bilingual = true, chinese = true }
 
 function settings.get()
     local mode = millennium.config.get("displayMode")
+    -- v0.1.6 exposed an "original" mode that is no longer part of the core
+    -- feature. Treat it like any invalid legacy value and persist the default.
     if not allowed[mode] then
         mode = "bilingual"
         millennium.config.set("displayMode", mode)
@@ -19,4 +21,3 @@ function settings.set_mode(mode)
 end
 
 return settings
-

@@ -1,14 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { formatDisplayName, normalizeAppId } from "../../frontend/translation/formatDisplayName";
+import { appendActiveBeta, formatDisplayName, normalizeAppId } from "../../frontend/translation/formatDisplayName";
 import type { TranslationCatalog } from "../../frontend/types/catalog";
 
 const catalog: TranslationCatalog = { schemaVersion: 1, games: { "620": "传送门 2", "730": "反恐精英 2" } };
 
 describe("formatDisplayName", () => {
-  it("formats a translated English name in all modes", () => {
+  it("formats a translated English name in both supported modes", () => {
     expect(formatDisplayName(620, "Portal 2", catalog, "bilingual")).toBe("传送门 2 | Portal 2");
     expect(formatDisplayName(620, "Portal 2", catalog, "chinese")).toBe("传送门 2");
-    expect(formatDisplayName(620, "Portal 2", catalog, "original")).toBe("Portal 2");
   });
   it.each(["传送门 2", "傳送門 2", "Portal 传送门"])("preserves names containing Han: %s", (name) => {
     expect(formatDisplayName(620, name, catalog, "bilingual")).toBe(name);
@@ -29,5 +28,8 @@ describe("formatDisplayName", () => {
     expect(normalizeAppId(0xffff_ffff)).toBe("4294967295");
     expect(normalizeAppId(0x1_0000_0000)).toBeNull();
   });
+  it("preserves Steam's beta suffix in either display mode", () => {
+    expect(appendActiveBeta("传送门 2 | Portal 2", "public-test")).toBe("传送门 2 | Portal 2 [public-test]");
+    expect(appendActiveBeta("传送门 2", "public-test")).toBe("传送门 2 [public-test]");
+  });
 });
-

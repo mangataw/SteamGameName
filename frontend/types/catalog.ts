@@ -4,7 +4,7 @@ export interface TranslationCatalog {
 }
 
 export type CatalogSource = "bundled" | "cache" | "remote";
-export type CatalogState = "内置" | "缓存" | "最新" | "离线" | "错误";
+export type CatalogState = "bundled" | "cached" | "latest" | "offline" | "error";
 
 export interface CatalogStatus {
   source: CatalogSource;
@@ -17,4 +17,3 @@ export interface CatalogStatus {
   error: string | null;
   patchCompatible: boolean;
 }
-

@@ -15,7 +15,7 @@ let snapshot: TranslationSnapshot = {
   catalog: bundledCatalog,
   settings: { schemaVersion: 1, displayMode: "bilingual" },
   status: {
-    source: "bundled", state: "内置", entryCount: 0, etag: null, lastModified: null,
+    source: "bundled", state: "bundled", entryCount: 0, etag: null, lastModified: null,
     lastCheckedAt: null, lastSuccessfulUpdateAt: null, error: null, patchCompatible: true,
   },
   // The frontend export can be called before backend RPC initialization. Start
@@ -24,6 +24,7 @@ let snapshot: TranslationSnapshot = {
   version: 1,
 };
 const listeners = new Set<() => void>();
+let settingsEpoch = 0;
 
 function publish(next: Omit<TranslationSnapshot, "version">): void {
   snapshot = { ...next, version: snapshot.version + 1 };
@@ -37,16 +38,19 @@ export const translationStore = {
     return () => listeners.delete(listener);
   },
   async initialize(): Promise<void> {
+    const epochAtStart = settingsEpoch;
     const [catalog, settings, status] = await Promise.all([
       backendService.getCatalog(), backendService.getSettings(), backendService.getStatus(),
     ]);
-    publish({ catalog, settings, status });
+    publish({ catalog, settings: epochAtStart === settingsEpoch ? settings : snapshot.settings, status });
   },
   async reload(): Promise<void> {
     await this.initialize();
   },
   async setMode(mode: DisplayMode): Promise<void> {
+    const requestEpoch = ++settingsEpoch;
     const settings = await backendService.setDisplayMode(mode);
+    if (requestEpoch !== settingsEpoch) return;
     publish({ catalog: snapshot.catalog, status: snapshot.status, settings });
   },
   async refresh(): Promise<void> {

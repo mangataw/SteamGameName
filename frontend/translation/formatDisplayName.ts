@@ -21,10 +21,13 @@ export function formatDisplayName(
 ): unknown {
   if (typeof originalName !== "string" || originalName.length === 0) return originalName;
   const normalizedId = normalizeAppId(appId);
-  if (!normalizedId || containsHan(originalName) || mode === "original") return originalName;
+  if (!normalizedId || containsHan(originalName)) return originalName;
   const chineseName = catalog.games[normalizedId];
   if (!chineseName) return originalName;
   if (mode === "chinese") return chineseName;
   return chineseName === originalName ? originalName : `${chineseName} | ${originalName}`;
 }
 
+export function appendActiveBeta(displayName: unknown, activeBeta?: string): unknown {
+  return activeBeta ? `${displayName} [${activeBeta}]` : displayName;
+}

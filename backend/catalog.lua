@@ -11,7 +11,7 @@ local catalog = {}
 local MAX_BYTES = 5 * 1024 * 1024
 local current = { schemaVersion = 1, games = {} }
 local status = {
-    source = "bundled", state = "内置", entryCount = 0, etag = nil, lastModified = nil,
+    source = "bundled", state = "bundled", entryCount = 0, etag = nil, lastModified = nil,
     lastCheckedAt = nil, lastSuccessfulUpdateAt = nil, error = nil, patchCompatible = true,
 }
 local metadata = {}
@@ -52,11 +52,11 @@ function catalog.initialize()
     local bundled, bundled_count = decode_and_validate(bundled_content)
     if not bundled then
         logger:error("Bundled catalog is invalid")
-        update_status("bundled", "错误", 0, "内置词库无效")
+        update_status("bundled", "error", 0, "bundled_catalog_invalid")
         return
     end
     current = bundled
-    update_status("bundled", "内置", bundled_count, nil)
+    update_status("bundled", "bundled", bundled_count, nil)
 
     local stored_metadata = cache.read_json(cache.metadata_path, 64 * 1024)
     metadata = validation.validate_metadata(stored_metadata)
@@ -65,7 +65,7 @@ function catalog.initialize()
         local cached_count = validation.validate_catalog(cached)
         if cached_count then
             current = cached
-            update_status("cache", "缓存", cached_count, nil)
+            update_status("cache", "cached", cached_count, nil)
         else logger:warn("Ignoring invalid cached catalog") end
     end
     logger:info(string.format("Loaded %d translations from %s", status.entryCount, status.source))
@@ -79,7 +79,7 @@ function catalog.refresh(force)
     if refreshing then return nil, "refresh_in_progress" end
     if not force and automatically_checked then return status end
     if not source.remote_url then
-        status.error = "本地构建未配置远程词库地址"
+        status.error = "remote_catalog_unconfigured"
         return status
     end
     refreshing = true
@@ -95,14 +95,14 @@ function catalog.refresh(force)
     if not response then
         refreshing = false
         status.lastCheckedAt = checked_at
-        status.state = current == nil and "错误" or "离线"
-        status.error = "词库请求失败: " .. tostring(request_error)
+        status.state = current == nil and "error" or "offline"
+        status.error = "catalog_request_failed: " .. tostring(request_error)
         cache.atomic_write_json(cache.metadata_path, metadata)
         return status
     end
     if response.status == 304 then
         refreshing = false
-        status.state = "最新"
+        status.state = "latest"
         status.lastCheckedAt = checked_at
         status.error = nil
         cache.atomic_write_json(cache.metadata_path, metadata)
@@ -111,8 +111,8 @@ function catalog.refresh(force)
     if response.status ~= 200 then
         refreshing = false
         status.lastCheckedAt = checked_at
-        status.state = "离线"
-        status.error = "远程服务器返回 HTTP " .. tostring(response.status)
+        status.state = "offline"
+        status.error = "remote_http_error: " .. tostring(response.status)
         cache.atomic_write_json(cache.metadata_path, metadata)
         return status
     end
@@ -120,16 +120,16 @@ function catalog.refresh(force)
     if not decoded then
         refreshing = false
         status.lastCheckedAt = checked_at
-        status.state = "错误"
-        status.error = "远程词库校验失败: " .. tostring(count_or_error)
+        status.state = "error"
+        status.error = "remote_catalog_invalid: " .. tostring(count_or_error)
         cache.atomic_write_json(cache.metadata_path, metadata)
         return status
     end
     local wrote, write_error = cache.atomic_write_json(cache.catalog_path, decoded, validation.validate_catalog)
     if not wrote then
         refreshing = false
-        status.state = "错误"
-        status.error = "缓存写入失败: " .. tostring(write_error)
+        status.state = "error"
+        status.error = "cache_write_failed: " .. tostring(write_error)
         return status
     end
     metadata.etag = response.headers and (response.headers.etag or response.headers.ETag) or nil
@@ -138,7 +138,7 @@ function catalog.refresh(force)
     metadata.remoteUrl = source.remote_url
     cache.atomic_write_json(cache.metadata_path, metadata)
     current = decoded
-    update_status("remote", "最新", count_or_error, nil)
+    update_status("remote", "latest", count_or_error, nil)
     refreshing = false
     logger:info(string.format("Catalog updated: %d entries", count_or_error))
     notify_frontend()
