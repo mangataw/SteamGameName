@@ -2,11 +2,13 @@ import { backendService } from "./backend";
 import bundledCatalogJson from "../../data/translations.zh-CN.json";
 import type { CatalogStatus, TranslationCatalog } from "../types/catalog";
 import type { DisplayMode, PluginSettings } from "../types/settings";
+import { buildCatalogSearchIndex, type CatalogSearchIndex } from "../translation/matchesCatalogSearch";
 
 export interface TranslationSnapshot {
   catalog: TranslationCatalog;
   settings: PluginSettings;
   status: CatalogStatus;
+  searchIndex: CatalogSearchIndex;
   version: number;
 }
 
@@ -18,6 +20,7 @@ let snapshot: TranslationSnapshot = {
     source: "bundled", state: "bundled", entryCount: 0, etag: null, lastModified: null,
     lastCheckedAt: null, lastSuccessfulUpdateAt: null, error: null, patchCompatible: true,
   },
+  searchIndex: buildCatalogSearchIndex(bundledCatalog),
   // The frontend export can be called before backend RPC initialization. Start
   // with the bundled catalog so that first call is useful without embedding the
   // complete catalog in the Steam UI patch string.
@@ -43,7 +46,12 @@ export const translationStore = {
     const [catalog, settings, status] = await Promise.all([
       backendService.getCatalog(), backendService.getSettings(), backendService.getStatus(),
     ]);
-    publish({ catalog, settings: epochAtStart === settingsEpoch ? settings : snapshot.settings, status });
+    publish({
+      catalog,
+      settings: epochAtStart === settingsEpoch ? settings : snapshot.settings,
+      status,
+      searchIndex: catalog === snapshot.catalog ? snapshot.searchIndex : buildCatalogSearchIndex(catalog),
+    });
   },
   async reload(): Promise<void> {
     await this.initialize();
@@ -58,7 +66,12 @@ export const translationStore = {
     const requestEpoch = ++settingsEpoch;
     const settings = await backendService.setDisplayMode(mode);
     if (requestEpoch !== settingsEpoch) return;
-    publish({ catalog: snapshot.catalog, status: snapshot.status, settings });
+    publish({
+      catalog: snapshot.catalog,
+      status: snapshot.status,
+      settings,
+      searchIndex: snapshot.searchIndex,
+    });
   },
   async refresh(force = true): Promise<void> {
     await backendService.refreshCatalog(force);

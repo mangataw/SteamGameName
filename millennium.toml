@@ -1,9 +1,9 @@
 [plugin]
 id = "steam-game-name-zh"
 name = "Steam 游戏名中文化"
-version = "0.1.8"
+version = "0.2.0"
 author = "SteamGameName contributors"
-description = "使用 AppID 将 Steam 游戏库左侧列表中的游戏名显示为简体中文或双语。"
+description = "使用 AppID 为 Steam 游戏库左侧列表提供中文名称显示与中文搜索。"
 
 [assets]
 resources = ["data/translations.zh-CN.json"]

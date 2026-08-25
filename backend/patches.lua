@@ -1,5 +1,6 @@
--- Targets the current stable Steam library sidebar name renderer. The find segment
--- includes all display-name fields to avoid matching details, downloads or search UI.
+-- Targets the current stable Steam library sidebar. Display-name rendering and
+-- text filtering are deliberately separate patches so either feature can fail
+-- closed without changing the other one.
 local patches = {}
 
 function patches.get()
@@ -21,6 +22,24 @@ function patches.get()
                     -- snapshot and backend asset, so catalog growth never inflates
                     -- the Hooking API replacement string again.
                     replace = [[\1\3=\4;\3=\6.active_beta?\3+" ["+\6.active_beta+"]":\3;\3=#{{self}}?.gameNames?.render(\2.item.appid,\4,\6.active_beta)??((e=>e?e+" | "+\3:\3)({"10":"\u53cd\u6050\u7cbe\u82f1","220":"\u534a\u8870\u671f 2","400":"\u4f20\u9001\u95e8","570":"\u5200\u5854 2","620":"\u4f20\u9001\u95e8 2","730":"\u53cd\u6050\u7cbe\u82f1 2","271590":"\u4fa0\u76d7\u730e\u8f66\u624b V"}[String(\2.item.appid)]));]],
+                },
+            },
+        },
+        {
+            file = [[chunk~[0-9a-f]+\.js]],
+            -- Match the library AppFilter text-search tail. The AppID and all
+            -- original Steam name/sort-name/fuzzy checks are structural signals
+            -- that keep this away from store, friends and global search code.
+            find = [[if\(String\(\w+\.appid\)==this\.m_filterSpec\.strSearchText\)return!0;let \w+=this\.m_filterSpec\.strSearchText\.toLowerCase\(\),\w+=\w+\.display_name\.toLowerCase\(\);return!\(!\w+\.includes\(\w+\)&&!\w+\.sort_as\.includes\(\w+\)\)\|\|-1!==\w+\(\w+,\w+\)]],
+            transforms = {
+                {
+                    -- RE2 cannot use backreferences in the match expression, so
+                    -- capture the app, query and original result independently.
+                    match = [[(if\(String\((\w+)\.appid\)==this\.m_filterSpec\.strSearchText\)return!0;let (\w+)=this\.m_filterSpec\.strSearchText\.toLowerCase\(\),(\w+)=\w+\.display_name\.toLowerCase\(\);return)(!\(!\w+\.includes\(\w+\)&&!\w+\.sort_as\.includes\(\w+\)\)\|\|-1!==\w+\(\w+,\w+\))]],
+                    -- Keep Steam's built-in result authoritative and add only a
+                    -- synchronous in-memory Chinese-name match. Missing frontend
+                    -- exports evaluate false, which is the safe English-only path.
+                    replace = [[\1(\5)||(#{{self}}?.gameSearch?.matches(\2.appid,\3)??!1)]],
                 },
             },
         },

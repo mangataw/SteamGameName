@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { translationStore } from "../../frontend/services/translationStore";
+import { matchesCatalogSearch } from "../../frontend/translation/matchesCatalogSearch";
 
 const catalog = { schemaVersion: 1 as const, games: { "620": "传送门 2" } };
 const status = {
@@ -111,6 +112,22 @@ describe("translationStore display mode", () => {
     expect(persistedMode).toBe("chinese");
     expect(translationStore.getSnapshot().settings.displayMode).toBe("chinese");
     expect(translationStore.getSnapshot().status.entryCount).toBe(1);
+  });
+
+  it("atomically rebuilds the in-memory search index when the catalog changes", async () => {
+    const testBackend = (globalThis as typeof globalThis & {
+      backend: { get_catalog: () => Promise<string> };
+    }).backend;
+    testBackend.get_catalog = async () => envelope({
+      schemaVersion: 1,
+      games: { "730": "反恐精英 2" },
+    });
+
+    await translationStore.reload();
+
+    const snapshot = translationStore.getSnapshot();
+    expect(matchesCatalogSearch(730, "反恐精英", snapshot.searchIndex)).toBe(true);
+    expect(matchesCatalogSearch(620, "传送门", snapshot.searchIndex)).toBe(false);
   });
 
 });

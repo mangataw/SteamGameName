@@ -4,6 +4,7 @@ import { SettingsContent } from "./components/SettingsContent";
 import { TranslatedGameName } from "./components/TranslatedGameName";
 import { translationStore } from "./services/translationStore";
 import { formatDisplayName } from "./translation/formatDisplayName";
+import { matchesCatalogSearch } from "./translation/matchesCatalogSearch";
 
 /** @ffi */
 export const gameNames = {
@@ -16,6 +17,13 @@ export const gameNames = {
     void translationStore.reportPatchCompatible()
       .catch((error: unknown) => console.error("Failed to report sidebar patch compatibility", error));
     return createElement(TranslatedGameName, { appId, originalName, activeBeta });
+  },
+};
+
+/** @ffi */
+export const gameSearch = {
+  matches(appId: number | string, query: string): boolean {
+    return matchesCatalogSearch(appId, query, translationStore.getSnapshot().searchIndex);
   },
 };
 

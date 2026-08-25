@@ -1,6 +1,6 @@
 # Steam 游戏名中文化
 
-Millennium / SteamBrew 插件，按 Steam AppID 将 Windows Steam 桌面客户端游戏库左侧列表中的游戏名称显示为简体中文或双语。默认格式为 `中文名 | 原名`；Steam 原名已经包含汉字时保持不变。
+Millennium / SteamBrew 插件，按 Steam AppID 将 Windows Steam 桌面客户端游戏库左侧列表中的游戏名称显示为简体中文或双语，并允许使用中文译名或 Steam 英文原名搜索。默认格式为 `中文名 | 原名`；Steam 原名已经包含汉字时保持不变。
 
 ## 要求
 
@@ -30,7 +30,7 @@ pnpm run build
 
 禁用或删除插件后，Hooking API 不再应用补丁，Steam 将显示原始名称；插件不会修改 Steam 清单或数据库。
 
-当前 `v0.1.8` 是首个稳定核心版。显示模式、远程热更新、缓存与超时回退、补丁失配安全降级，以及 GitHub Release 安装均已通过自动化和 Windows 11 真机验证。
+当前已发布的 `v0.1.8` 是首个稳定核心版。工作树中的 `v0.2.0` 增加了与显示模式解耦的左栏中文搜索；自动化、Windows 11 真机、5,000 条本地性能门禁、独立失配降级和候选 ZIP 空缓存安装均已通过，等待提交标签并复验 GitHub Release 正式产物。
 
 ## 发布与维护
 

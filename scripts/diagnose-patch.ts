@@ -3,7 +3,7 @@ import { parse } from "luaparse";
 
 type LuaNode = { type?: string; key?: { name?: string }; value?: unknown; [key: string]: unknown };
 
-function productionString(source: string, fieldName: string): string {
+function productionStrings(source: string, fieldName: string): string[] {
   const ast = parse(source, { comments: false, encodingMode: "x-user-defined", luaVersion: "5.3" }) as unknown as LuaNode;
   const matches: string[] = [];
   const visit = (node: unknown): void => {
@@ -19,8 +19,7 @@ function productionString(source: string, fieldName: string): string {
     }
   };
   visit(ast);
-  if (matches.length !== 1) throw new Error(`Expected one production ${fieldName}, found ${matches.length}`);
-  return matches[0]!;
+  return matches;
 }
 
 const targetPath = process.argv[2];
@@ -31,12 +30,15 @@ const [patchSource, targetSource] = await Promise.all([
 ]);
 
 for (const field of ["find", "match"] as const) {
-  const expression = new RegExp(productionString(patchSource, field), "g");
-  const matches = [...targetSource.matchAll(expression)];
-  console.log(`${field}: ${matches.length} match(es)`);
-  if (matches[0]?.index !== undefined) {
-    const start = Math.max(0, matches[0].index - 160);
-    const end = Math.min(targetSource.length, matches[0].index + matches[0][0].length + 160);
-    console.log(targetSource.slice(start, end));
-  }
+  const expressions = productionStrings(patchSource, field);
+  expressions.forEach((source, patchIndex) => {
+    const expression = new RegExp(source, "g");
+    const matches = [...targetSource.matchAll(expression)];
+    console.log(`${field}[${patchIndex}]: ${matches.length} match(es)`);
+    if (matches[0]?.index !== undefined) {
+      const start = Math.max(0, matches[0].index - 160);
+      const end = Math.min(targetSource.length, matches[0].index + matches[0][0].length + 160);
+      console.log(targetSource.slice(start, end));
+    }
+  });
 }

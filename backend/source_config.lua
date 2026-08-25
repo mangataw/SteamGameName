@@ -1,5 +1,5 @@
--- Generated in release builds by scripts/generate-source-config.ts.
+-- Generated; do not edit in release artifacts.
 return {
     remote_url = nil,
-    version = "0.1.8"
+    version = "0.2.0"
 }
