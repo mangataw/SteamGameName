@@ -30,7 +30,7 @@ pnpm run build
 
 禁用或删除插件后，Hooking API 不再应用补丁，Steam 将显示原始名称；插件不会修改 Steam 清单或数据库。
 
-当前 `v0.1.8` 是首个稳定核心版。显示模式、远程热更新、缓存与超时回退、补丁失配安全降级均已通过自动化和 Windows 11 真机验证；发布后按 [项目状态与验收清单](docs/PROJECT_STATUS.md) 完成 GitHub Release 干净安装复验。
+当前 `v0.1.8` 是首个稳定核心版。显示模式、远程热更新、缓存与超时回退、补丁失配安全降级，以及 GitHub Release 安装均已通过自动化和 Windows 11 真机验证。
 
 ## 发布与维护
 
