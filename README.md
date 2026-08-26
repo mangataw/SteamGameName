@@ -15,9 +15,14 @@ Millennium / SteamBrew 插件，按 Steam AppID 将 Windows Steam 桌面客户�
 pnpm install --frozen-lockfile
 pnpm run check
 pnpm run build
+pnpm run verify:star
+pnpm run package
+pnpm run verify:package -- release/steam-game-name-zh-v0.2.0.zip
 ```
 
 本地构建默认只使用打包词库。发布工作流通过 `GITHUB_REPOSITORY` 注入同仓库 GitHub Raw 地址。
+
+公共仓库的脱敏范围、隔离构建结果和 PluginDatabase 预审项见 [公共发布审计](docs/PUBLIC_RELEASE_AUDIT.md)。
 
 ## 安装与卸载
 

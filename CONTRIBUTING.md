@@ -8,7 +8,9 @@
 pnpm install --frozen-lockfile
 pnpm run check
 pnpm run build
+pnpm run verify:star
 pnpm run package
+pnpm run verify:package -- release/steam-game-name-zh-v0.2.0.zip
 ```
 
 词库不得包含 HTML、控制字符、机器广告文案或无汉字译名。代码变更还应说明测试范围；影响补丁、缓存、远程更新或插件生命周期的变更，需要补充对应自动化测试和真机验证记录。

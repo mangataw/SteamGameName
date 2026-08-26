@@ -82,7 +82,7 @@
 - [ ] 确认 PluginDatabase 对 Starlight `.star`、Lua 后端、根目录 `plugin.json` 和可变纯数据远程词库的当前要求。
 - [ ] 若 PluginDatabase 不接受固定代码读取 `main` 可变词库，则切换为其认可的捆绑或不可变版本化词库方案。
 - [x] 补充 `CHANGELOG.md`、网络行为/隐私、安全报告方式和支持范围说明。
-- [ ] 完成剩余公共仓库审计与干净克隆构建验证。
+- [x] 完成公共仓库审计与隔离克隆构建验证；补充 LF 策略并记录 PluginDatabase 当前构建脚本与 Starlight 模板的过渡期差异。
 - [ ] 完成官方模板要求的 Stable/Beta 自测、第三方 Stable/Beta 验证，以及两个其他插件 PR 的测试反馈链接。
 - [ ] 发布并观察 `v1.0.0-rc.1`；只有出现阻断修复时才追加后续 RC。关闭所有阻断项后发布 `v1.0.0`，最后提交 PluginDatabase PR。
 
@@ -105,6 +105,13 @@
 - [x] 提交代码、创建 `v0.2.0` 标签，并复验 GitHub CI/Release 正式产物。
 
 ## 真机验证记录
+
+### 2026-08-26：公共仓库与隔离构建审计
+
+- 复核全部被跟踪文件，未发现密钥、账户数据、Steam ID、本机绝对路径、缓存、日志或构建产物；个人库导入记录保持脱敏。
+- 从提交 `ceeb12e` 创建隔离克隆，以冻结锁文件从零安装依赖；51 项 Vitest、4 组 Lua 测试、692 条词库校验、正式 `.star`、四区段校验和 ZIP 内容校验全部通过。
+- 发现 Windows 自动换行会在 `starlight lsp` 后制造三个无内容差异的伪修改；新增 `.gitattributes` 固定文本文件为 LF。
+- 官方 PluginTemplate 已采用 Starlight 和 `millennium.toml`，但 PluginDatabase 当前分发脚本仍硬性要求旧式 `plugin.json`；该兼容边界须在提交前取得维护者确认，不以未经验证的兼容文件规避。
 
 ### 2026-08-26：个人 Steam 库 70–79% 好评候选导入
 
