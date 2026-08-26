@@ -10,7 +10,9 @@
 
 正式发布构建只访问以下由构建过程固定的 HTTPS 地址：
 
-`https://raw.githubusercontent.com/mangataw/SteamGameName/main/data/translations.zh-CN.json`
+`https://raw.githubusercontent.com/mangataw/SteamGameName/<发布提交的完整 SHA>/data/translations.zh-CN.json`
+
+其中提交 SHA 在构建发布产物时固定，不能由用户或远程内容修改。后续合入 `main` 的词库变化不会影响已经发布的插件；新词库随新的审核和发布提交提供。
 
 请求发生在插件前端初始化完成后的自动检查，以及用户在设置页主动刷新词库时。插件使用 ETag 和 Last-Modified 条件请求，在内容未变化时接受 HTTP 304；请求超时为 8 秒。请求不包含游戏库、Steam ID、搜索词或插件设置。
 

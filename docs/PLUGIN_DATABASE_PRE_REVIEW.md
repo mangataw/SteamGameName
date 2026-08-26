@@ -25,17 +25,17 @@ plugin.json was not found. It is required for plugins to have.
 
 What is the intended submission and distribution path for a Starlight `.star` plugin? Should the repository wait for PluginDatabase's build pipeline to support the current template, or is there a maintainer-approved compatibility manifest/layout?
 
-## Question 2: fixed remote data catalog
+## Question 2: immutable remote data catalog
 
-Release builds can make conditional HTTPS requests to this fixed same-repository URL:
+Each release build can make conditional HTTPS requests to a same-repository URL pinned to the full commit SHA used to build that release:
 
 ```text
-https://raw.githubusercontent.com/mangataw/SteamGameName/main/data/translations.zh-CN.json
+https://raw.githubusercontent.com/mangataw/SteamGameName/<full-release-commit-sha>/data/translations.zh-CN.json
 ```
 
-The URL is injected at build time and cannot be changed by users or downloaded content. Requests do not follow redirects, verify TLS, time out after 8 seconds, and send no Steam ID, library, search, settings, or telemetry data. Responses are size-limited and validated as Schema version 1 AppID-to-Chinese-name data; values cannot contain HTML, control characters, code, commands, patches, or another URL. Invalid responses never replace the last valid cache or bundled catalog.
+The URL is injected at build time from GitHub Actions' full `github.sha` and cannot be changed by users or downloaded content. Later changes to `main` cannot affect an already released plugin. Requests do not follow redirects, verify TLS, time out after 8 seconds, and send no Steam ID, library, search, settings, or telemetry data. Responses are size-limited and validated as Schema version 1 AppID-to-Chinese-name data; values cannot contain HTML, control characters, code, commands, patches, or another URL. Invalid responses never replace the last valid cache or bundled catalog.
 
-Is a mutable, data-only catalog on the repository's `main` branch acceptable for PluginDatabase review? If not, would an immutable tag/commit URL be accepted, or must every catalog update be bundled into a newly reviewed plugin commit?
+Is this immutable, data-only same-commit request acceptable for PluginDatabase review, or must the plugin operate exclusively from its bundled copy with no network request? Every catalog update will already require a new plugin release and PluginDatabase commit-pointer update.
 
 ## Available evidence
 

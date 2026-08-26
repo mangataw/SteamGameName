@@ -30,6 +30,15 @@ if (!/remote_url\s*=\s*nil/.test(sourceConfig)) {
   throw new Error("The tracked development source config must not contain a remote URL");
 }
 
+const releaseWorkflow = await readFile(resolve(repositoryRoot, ".github/workflows/release.yml"), "utf8");
+if (!/GITHUB_SHA\s*=\s*"\$\{\{ github\.sha \}\}"/.test(releaseWorkflow)) {
+  throw new Error("Release workflow must pin the remote catalog to github.sha");
+}
+const sourceConfigGenerator = await readFile(resolve(repositoryRoot, "scripts/generate-source-config.ts"), "utf8");
+if (!/process\.env\.GITHUB_SHA/.test(sourceConfigGenerator)) {
+  throw new Error("Release source config must use the immutable GITHUB_SHA");
+}
+
 const personalPathPattern = /[A-Za-z]:\\Users\\/;
 for (const path of trackedFiles.filter((value) => /\.(?:json|md|lua|ts|tsx|toml|ya?ml)$/.test(value))) {
   const content = await readFile(resolve(repositoryRoot, path), "utf8");
