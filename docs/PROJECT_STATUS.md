@@ -83,6 +83,7 @@
 - [ ] 若 PluginDatabase 不接受固定代码读取 `main` 可变词库，则切换为其认可的捆绑或不可变版本化词库方案。
 - [x] 补充 `CHANGELOG.md`、网络行为/隐私、安全报告方式和支持范围说明。
 - [x] 完成公共仓库审计与隔离克隆构建验证；补充 LF 策略并记录 PluginDatabase 当前构建脚本与 Starlight 模板的过渡期差异。
+- [x] 将构建产物、敏感文件、本机路径、个人导入字段和本地远程地址基线纳入 `check:repository` 自动门禁。
 - [ ] 完成官方模板要求的 Stable/Beta 自测、第三方 Stable/Beta 验证，以及两个其他插件 PR 的测试反馈链接。
 - [ ] 发布并观察 `v1.0.0-rc.1`；只有出现阻断修复时才追加后续 RC。关闭所有阻断项后发布 `v1.0.0`，最后提交 PluginDatabase PR。
 
@@ -112,6 +113,8 @@
 - 从提交 `ceeb12e` 创建隔离克隆，以冻结锁文件从零安装依赖；51 项 Vitest、4 组 Lua 测试、692 条词库校验、正式 `.star`、四区段校验和 ZIP 内容校验全部通过。
 - 发现 Windows 自动换行会在 `starlight lsp` 后制造三个无内容差异的伪修改；新增 `.gitattributes` 固定文本文件为 LF。
 - 官方 PluginTemplate 已采用 Starlight 和 `millennium.toml`，但 PluginDatabase 当前分发脚本仍硬性要求旧式 `plugin.json`；该兼容边界须在提交前取得维护者确认，不以未经验证的兼容文件规避。
+- 进一步锁定 PluginDatabase `97403bd` 和 PluginTemplate `af0a07c`：把数据库当前构建脚本原样用于本项目隔离构建，稳定复现缺少 `plugin.json` 的退出码 1；确认是官方模板与数据库流程尚未同步的外部门禁。
+- PluginDatabase 当前规则要求全面审计网络访问但未明文禁止远程纯数据；本项目固定 GitHub Raw、零上传、禁重定向、TLS 校验、超时与严格数据校验具备送审基础，可变 `main` 词库是否绕过固定提交审核仍需明确确认。
 
 ### 2026-08-26：个人 Steam 库 70–79% 好评候选导入
 
