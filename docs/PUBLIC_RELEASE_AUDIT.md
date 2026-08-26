@@ -35,6 +35,8 @@ pnpm run verify:package -- release/steam-game-name-zh-v0.2.0.zip
 
 本项目不凭推测添加旧式 `plugin.json` 或改变已经真机验收的 `.star` 结构。提交 PluginDatabase 前必须先确认其对 Starlight `.star` 插件的接入路径；若现行脚本尚未支持，则等待官方流程更新，或采用维护者明确认可的兼容方案。
 
+已准备不包含无关上游菜单问题的英文预审草稿，见 [`PLUGIN_DATABASE_PRE_REVIEW.md`](PLUGIN_DATABASE_PRE_REVIEW.md)；在用户明确授权外部提交前只保存在本地仓库。
+
 PluginDatabase 当前审核说明要求审计所有网络请求，PR 清单允许可信、公开且不存在关联获利的外部平台，没有明文禁止远程纯数据。本项目的正式请求固定到同仓库 GitHub Raw，不接受用户 URL、不跟随重定向、校验证书、8 秒超时，不发送游戏库或搜索数据，响应还必须通过大小、Schema 和业务规则校验。因此网络行为具备送审基础。
 
 仍需独立确认词库是否允许随 `main` 更新：可变远程数据虽然不能携带代码或新 URL，但会绕过 PluginDatabase 的固定子模块提交审核。若不允许，切换为审核方认可的捆绑词库或不可变版本化地址，不开放用户自定义 URL。

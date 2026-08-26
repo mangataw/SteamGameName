@@ -80,6 +80,7 @@
 - [ ] 词库作为独立数据更新合入 `main`，不为每批词库数据创建新的插件版本。
 - [ ] 复核固定同仓库 Raw 词库的请求、严格校验、缓存、离线回退和隐私文档；`v1.0.0` 不开放自定义远程 URL。
 - [ ] 确认 PluginDatabase 对 Starlight `.star`、Lua 后端、根目录 `plugin.json` 和可变纯数据远程词库的当前要求。
+- [x] 准备 PluginDatabase 英文预审草稿，只询问 Starlight 分发路径与固定远程纯数据政策；尚未对外发送。
 - [ ] 若 PluginDatabase 不接受固定代码读取 `main` 可变词库，则切换为其认可的捆绑或不可变版本化词库方案。
 - [x] 补充 `CHANGELOG.md`、网络行为/隐私、安全报告方式和支持范围说明。
 - [x] 完成公共仓库审计与隔离克隆构建验证；补充 LF 策略并记录 PluginDatabase 当前构建脚本与 Starlight 模板的过渡期差异。
