@@ -21,7 +21,7 @@ function patches.get()
                     -- and fixed: the complete bundled catalog lives in the frontend
                     -- snapshot and backend asset, so catalog growth never inflates
                     -- the Hooking API replacement string again.
-                    replace = [[\1\3=\4;\3=\6.active_beta?\3+" ["+\6.active_beta+"]":\3;\3=#{{self}}?.gameNames?.render(\2.item.appid,\4,\6.active_beta)??((e=>e?e+" | "+\3:\3)({"10":"\u53cd\u6050\u7cbe\u82f1","220":"\u534a\u8870\u671f 2","400":"\u4f20\u9001\u95e8","570":"\u5200\u5854 2","620":"\u4f20\u9001\u95e8 2","730":"\u53cd\u6050\u7cbe\u82f1 2","271590":"\u4fa0\u76d7\u730e\u8f66\u624b V"}[String(\2.item.appid)]));]],
+                    replace = [[\1\3=\4;\3=\6.active_beta?\3+" ["+\6.active_beta+"]":\3;\3=#{{self}}?.gameNames?.render(\2.item.appid,\4,\6.active_beta)??((e=>e?e+" | "+\3:\3)({"10":"\u53cd\u6050\u7cbe\u82f1","220":"\u534a\u8870\u671f 2","400":"\u4f20\u9001\u95e8","570":"\u5200\u5854 2","620":"\u4f20\u9001\u95e8 2","730":"\u53cd\u6050\u7cbe\u82f1 2"}[String(\2.item.appid)]));]],
                 },
             },
         },

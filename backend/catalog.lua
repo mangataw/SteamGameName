@@ -90,6 +90,7 @@ function catalog.refresh(force)
     local checked_at = iso_now()
     local headers = { ["Accept"] = "application/json" }
     if metadata.etag then headers["If-None-Match"] = metadata.etag end
+    if metadata.lastModified then headers["If-Modified-Since"] = metadata.lastModified end
     local response, request_error = http.get(source.remote_url, {
         headers = headers, timeout = 8, follow_redirects = false, verify_ssl = true,
         user_agent = "steam-game-name-zh/" .. source.version,
