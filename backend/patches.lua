@@ -6,7 +6,12 @@ local patches = {}
 function patches.get()
     return {
         {
-            file = [[chunk~[0-9a-f]+\.js]],
+            -- Steam Stable historically emitted the library code in a hashed
+            -- chunk, while the October 2026 client consolidated it into sp.js.
+            -- Keep both layouts so the same package remains usable across the
+            -- Stable/Beta rollout boundary; the structural find below still
+            -- ensures that unrelated files are never transformed.
+            file = [[(?:chunk~[0-9a-f]+|sp)\.js]],
             find = [[function \w+\(\w+\)\{let \w+=\(0,\w+\.\w+\)\(\(\)=>\{let\{item:\w+\}=\w+;return\{display_name:\w+\.display_name,display_name_elanguage:\w+\.display_name_elanguage,display_status:\w+\.display_status,active_beta:\w+\.active_beta,status_percentage:\w+\.status_percentage,remote_item:[^,}]+,update_available_but_disabled_by_app:[^}]+\}\}\),\w+=\w+\.display_name;\w+\.active_beta&&\(\w+=\w+\+" \["\+\w+\.active_beta\+"\]"\);]],
             transforms = {
                 {
@@ -26,16 +31,16 @@ function patches.get()
             },
         },
         {
-            file = [[chunk~[0-9a-f]+\.js]],
+            file = [[(?:chunk~[0-9a-f]+|sp)\.js]],
             -- Match the library AppFilter text-search tail. The AppID and all
             -- original Steam name/sort-name/fuzzy checks are structural signals
             -- that keep this away from store, friends and global search code.
-            find = [[if\(String\(\w+\.appid\)==this\.m_filterSpec\.strSearchText\)return!0;let \w+=this\.m_filterSpec\.strSearchText\.toLowerCase\(\),\w+=\w+\.display_name\.toLowerCase\(\);return!\(!\w+\.includes\(\w+\)&&!\w+\.sort_as\.includes\(\w+\)\)\|\|-1!==\w+\(\w+,\w+\)]],
+            find = [[String\(\w+\.appid\)==this\.m_filterSpec\.strSearchText\)return!0;let \w+=this\.m_filterSpec\.strSearchText\.toLowerCase\(\),\w+=\w+\.display_name\.toLowerCase\(\);return(?:!\(!\w+\.includes\(\w+\)&&!\w+\.sort_as\.includes\(\w+\)\)\|\|-1!==\w+\(\w+,\w+\)|!!\(\w+\.includes\(\w+\)\|\|\w+\.sort_as\.includes\(\w+\)\|\|\w+\(\w+,\w+\)!==-1\))]],
             transforms = {
                 {
                     -- RE2 cannot use backreferences in the match expression, so
                     -- capture the app, query and original result independently.
-                    match = [[(if\(String\((\w+)\.appid\)==this\.m_filterSpec\.strSearchText\)return!0;let (\w+)=this\.m_filterSpec\.strSearchText\.toLowerCase\(\),(\w+)=\w+\.display_name\.toLowerCase\(\);return)(!\(!\w+\.includes\(\w+\)&&!\w+\.sort_as\.includes\(\w+\)\)\|\|-1!==\w+\(\w+,\w+\))]],
+                    match = [[(String\((\w+)\.appid\)==this\.m_filterSpec\.strSearchText\)return!0;let (\w+)=this\.m_filterSpec\.strSearchText\.toLowerCase\(\),(\w+)=\w+\.display_name\.toLowerCase\(\);return)(!\(!\w+\.includes\(\w+\)&&!\w+\.sort_as\.includes\(\w+\)\)\|\|-1!==\w+\(\w+,\w+\)|!!\(\w+\.includes\(\w+\)\|\|\w+\.sort_as\.includes\(\w+\)\|\|\w+\(\w+,\w+\)!==-1\))]],
                     -- Keep Steam's built-in result authoritative and add only a
                     -- synchronous in-memory Chinese-name match. Missing frontend
                     -- exports evaluate false, which is the safe English-only path.

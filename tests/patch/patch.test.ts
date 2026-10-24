@@ -38,6 +38,7 @@ function replacement(source: string): string {
 const displaySignature = new RegExp(productionString("find", "display_name_elanguage"), "g");
 const displayTransform = new RegExp(productionString("match", "display_name_elanguage"), "g");
 const displayReplacement = replacement(productionString("replace", "gameNames"));
+const patchFilePatterns = productionStrings("file").map((source) => new RegExp(`^(?:${source})$`, "u"));
 const searchSignature = new RegExp(productionString("find", "m_filterSpec"), "g");
 const searchTransform = new RegExp(productionString("match", "m_filterSpec"), "g");
 const searchReplacement = replacement(productionString("replace", "gameSearch"));
@@ -53,6 +54,15 @@ const bundledCatalog = JSON.parse(readFileSync("data/translations.zh-CN.json", "
 };
 
 describe("production library sidebar display patch", () => {
+  it("routes both legacy hashed chunks and the current sp.js bundle", () => {
+    expect(patchFilePatterns).toHaveLength(2);
+    patchFilePatterns.forEach((pattern) => {
+      expect(pattern.test("chunk~2dcc5aaf7.js")).toBe(true);
+      expect(pattern.test("sp.js")).toBe(true);
+      expect(pattern.test("library.js")).toBe(false);
+    });
+  });
+
   it("keeps the synchronous bootstrap catalog small and sourced from bundled values", () => {
     const source = productionString("replace", "gameNames");
     const start = source.indexOf('{"10":');
