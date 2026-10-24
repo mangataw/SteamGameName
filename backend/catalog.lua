@@ -60,8 +60,16 @@ function catalog.initialize()
 
     local stored_metadata = cache.read_json(cache.metadata_path, 64 * 1024)
     metadata = validation.validate_metadata(stored_metadata)
+    local cache_matches_source = source.remote_url ~= nil and metadata.remoteUrl == source.remote_url
+    if not cache_matches_source then
+        -- Cache validators and contents belong to one exact build-controlled
+        -- source. Ignore caches created by the former commit-pinned URL (or any
+        -- other source) so an older valid snapshot cannot replace a newer
+        -- bundled catalog during an offline upgrade.
+        metadata = {}
+    end
     local cached = cache.read_json(cache.catalog_path, MAX_BYTES)
-    if cached then
+    if cache_matches_source and cached then
         local cached_count = validation.validate_catalog(cached)
         if cached_count then
             current = cached

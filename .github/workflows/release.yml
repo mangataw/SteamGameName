@@ -24,7 +24,7 @@ jobs:
         shell: pwsh
         run: |
           $env:PLUGIN_VERSION = "${{ github.ref_name }}".TrimStart('v')
-          $env:GITHUB_SHA = "${{ github.sha }}"
+          $env:CATALOG_REF = "main"
           pnpm exec tsx scripts/generate-source-config.ts
       - run: pnpm run build
       - run: pnpm run verify:star

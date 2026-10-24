@@ -31,12 +31,12 @@ if (!/remote_url\s*=\s*nil/.test(sourceConfig)) {
 }
 
 const releaseWorkflow = await readFile(resolve(repositoryRoot, ".github/workflows/release.yml"), "utf8");
-if (!/GITHUB_SHA\s*=\s*"\$\{\{ github\.sha \}\}"/.test(releaseWorkflow)) {
-  throw new Error("Release workflow must pin the remote catalog to github.sha");
+if (!/CATALOG_REF\s*=\s*"main"/.test(releaseWorkflow)) {
+  throw new Error("Release workflow must use the controlled main catalog ref");
 }
 const sourceConfigGenerator = await readFile(resolve(repositoryRoot, "scripts/generate-source-config.ts"), "utf8");
-if (!/process\.env\.GITHUB_SHA/.test(sourceConfigGenerator)) {
-  throw new Error("Release source config must use the immutable GITHUB_SHA");
+if (!/process\.env\.CATALOG_REF/.test(sourceConfigGenerator)) {
+  throw new Error("Release source config must use CATALOG_REF");
 }
 
 const personalPathPattern = /[A-Za-z]:\\Users\\/;

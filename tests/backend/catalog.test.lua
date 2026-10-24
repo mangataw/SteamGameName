@@ -88,14 +88,41 @@ test("no cache uses bundled catalog", function()
 end)
 
 test("damaged cache is ignored", function()
-    local catalog = load_catalog({ cached = { schemaVersion = 1, games = { bad = "无效" } } })
+    local catalog = load_catalog({
+        metadata = { remoteUrl = "https://example.invalid/catalog.json" },
+        cached = { schemaVersion = 1, games = { bad = "无效" } },
+    })
     catalog.initialize()
     equal(catalog.get_status().source, "bundled")
 end)
 
+test("cache from configured remote source is restored", function()
+    local catalog = load_catalog({
+        metadata = { remoteUrl = "https://example.invalid/catalog.json" },
+        cached = remote,
+    })
+    catalog.initialize()
+    equal(catalog.get_status().source, "cache")
+    equal(catalog.get(), remote)
+end)
+
+test("cache from a different remote source is ignored", function()
+    local catalog = load_catalog({
+        metadata = { remoteUrl = "https://example.invalid/old-commit/catalog.json", etag = "old" },
+        cached = remote,
+    })
+    catalog.initialize()
+    equal(catalog.get_status().source, "bundled")
+    equal(catalog.get(), bundled)
+end)
+
 test("remote 200 validates, persists, swaps, and notifies", function()
     local catalog, writes, requests, notification_count = load_catalog({
-        metadata = { etag = "old", lastModified = "yesterday" },
+        metadata = {
+            remoteUrl = "https://example.invalid/catalog.json",
+            etag = "old",
+            lastModified = "yesterday",
+        },
         response = { status = 200, body = "remote", headers = { ETag = "new", ["Last-Modified"] = "today" } },
     })
     catalog.initialize()

@@ -6,23 +6,28 @@ describe("release source config", () => {
     expect(renderSourceConfig({ version: "1.0.0-rc.1" })).toContain("remote_url = nil");
   });
 
-  it("pins release catalogs to the full release commit", () => {
-    const sha = "0123456789abcdef0123456789abcdef01234567";
+  it("tracks the controlled main catalog in release builds", () => {
     const content = renderSourceConfig({
       repository: "mangataw/SteamGameName",
-      commitSha: sha,
+      catalogRef: "main",
       version: "1.0.0-rc.1",
     });
 
-    expect(content).toContain(`https://raw.githubusercontent.com/mangataw/SteamGameName/${sha}/data/translations.zh-CN.json`);
-    expect(content).not.toContain("/main/");
+    expect(content).toContain("https://raw.githubusercontent.com/mangataw/SteamGameName/main/data/translations.zh-CN.json");
   });
 
-  it("rejects mutable or abbreviated release references", () => {
+  it("rejects arbitrary catalog references", () => {
     expect(() => renderSourceConfig({
       repository: "mangataw/SteamGameName",
-      commitSha: "main",
+      catalogRef: "feature/unreviewed-catalog",
       version: "1.0.0-rc.1",
-    })).toThrow("full 40-character commit SHA");
+    })).toThrow("CATALOG_REF must be main");
+  });
+
+  it("requires the repository and catalog ref together", () => {
+    expect(() => renderSourceConfig({
+      repository: "mangataw/SteamGameName",
+      version: "1.0.0-rc.1",
+    })).toThrow("must be provided together");
   });
 });
