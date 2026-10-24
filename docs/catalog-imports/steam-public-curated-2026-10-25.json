@@ -1,0 +1,37 @@
+{
+  "snapshotDate": "2026-10-25",
+  "sources": {
+    "most-played": "https://store.steampowered.com/charts/mostplayed",
+    "top-sellers": "https://store.steampowered.com/charts/topselling/global",
+    "best-of-2025": "https://store.steampowered.com/sale/bestof2025",
+    "best-of-2024": "https://store.steampowered.com/sale/bestof2024",
+    "best-of-2023": "https://store.steampowered.com/sale/BestOf2023",
+    "best-of-2022": "https://store.steampowered.com/sale/BestOf2022",
+    "best-of-2021": "https://store.steampowered.com/sale/BestOf2021"
+  },
+  "selection": "Games only; present in at least one listed Steam source; current Steam Simplified Chinese store name has no Han characters; absent from the catalog; high-confidence established Simplified Chinese title. Excludes DLC, demos, software, tools, brand-only names and uncertain translations.",
+  "games": [
+    { "appid": 218620, "originalName": "PAYDAY 2", "chineseName": "收获日 2", "sources": ["best-of-2024", "best-of-2023", "best-of-2022", "best-of-2021"] },
+    { "appid": 238960, "originalName": "Path of Exile", "chineseName": "流放之路", "sources": ["best-of-2024", "best-of-2023", "best-of-2022", "best-of-2021"] },
+    { "appid": 251570, "originalName": "7 Days to Die", "chineseName": "七日杀", "sources": ["most-played", "best-of-2024", "best-of-2023", "best-of-2022", "best-of-2021"] },
+    { "appid": 252950, "originalName": "Rocket League®", "chineseName": "火箭联盟", "sources": ["most-played", "best-of-2023", "best-of-2021"] },
+    { "appid": 304930, "originalName": "Unturned", "chineseName": "未转变者", "sources": ["best-of-2024", "best-of-2023", "best-of-2022", "best-of-2021"] },
+    { "appid": 322170, "originalName": "Geometry Dash", "chineseName": "几何冲刺", "sources": ["most-played"] },
+    { "appid": 427520, "originalName": "Factorio", "chineseName": "异星工厂", "sources": ["most-played", "best-of-2024"] },
+    { "appid": 648800, "originalName": "Raft", "chineseName": "木筏求生", "sources": ["best-of-2023", "best-of-2022", "best-of-2021"] },
+    { "appid": 728880, "originalName": "Overcooked! 2", "chineseName": "胡闹厨房 2", "sources": ["best-of-2024"] },
+    { "appid": 960090, "originalName": "Bloons TD 6", "chineseName": "气球塔防 6", "sources": ["best-of-2021"] },
+    { "appid": 975370, "originalName": "Dwarf Fortress", "chineseName": "矮人要塞", "sources": ["best-of-2022"] },
+    { "appid": 1144200, "originalName": "Ready or Not", "chineseName": "严阵以待", "sources": ["best-of-2024", "best-of-2023", "best-of-2022"] },
+    { "appid": 1304930, "originalName": "The Outlast Trials", "chineseName": "逃生：试炼", "sources": ["most-played", "best-of-2023"] },
+    { "appid": 1364780, "originalName": "Street Fighter 6", "chineseName": "街头霸王 6", "sources": ["most-played", "best-of-2024", "best-of-2023"] },
+    { "appid": 1449850, "originalName": "Yu-Gi-Oh! Master Duel", "chineseName": "游戏王：大师决斗", "sources": ["best-of-2024", "best-of-2023", "best-of-2022"] },
+    { "appid": 1973530, "originalName": "Limbus Company", "chineseName": "边狱公司", "sources": ["most-played", "top-sellers", "best-of-2024"] },
+    { "appid": 2246340, "originalName": "Monster Hunter Wilds", "chineseName": "怪物猎人：荒野", "sources": ["most-played", "top-sellers", "best-of-2025", "best-of-2024"] },
+    { "appid": 2300320, "originalName": "Farming Simulator 25", "chineseName": "模拟农场 25", "sources": ["most-played", "top-sellers", "best-of-2024"] },
+    { "appid": 2868840, "originalName": "Slay the Spire 2", "chineseName": "杀戮尖塔 2", "sources": ["most-played", "top-sellers"] },
+    { "appid": 3393110, "originalName": "AION 2", "chineseName": "永恒之塔 2", "sources": ["most-played", "top-sellers", "best-of-2025"] },
+    { "appid": 3513350, "originalName": "Wuthering Waves", "chineseName": "鸣潮", "sources": ["top-sellers", "best-of-2025"] },
+    { "appid": 3932890, "originalName": "Escape from Tarkov", "chineseName": "逃离塔科夫", "sources": ["most-played", "top-sellers"] }
+  ]
+}
