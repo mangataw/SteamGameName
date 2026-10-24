@@ -177,9 +177,9 @@ SteamGameName/
 │  │  └─ release.yml
 │  ├─ PULL_REQUEST_TEMPLATE.md
 │  └─ ISSUE_TEMPLATE/
-├─ plugin.json
+├─ millennium.toml
 ├─ package.json
-├─ bun.lock
+├─ pnpm-lock.yaml
 ├─ tsconfig.json
 ├─ README.md
 ├─ CONTRIBUTING.md
@@ -250,13 +250,13 @@ interface CatalogStatus {
 
 ### 6.4 远程地址生成
 
-发布构建通过 GitHub Actions 的 `${GITHUB_REPOSITORY}` 和 `${GITHUB_SHA}` 生成不可变数据地址：
+发布构建通过 GitHub Actions 的 `${GITHUB_REPOSITORY}` 和受控 `CATALOG_REF=main` 生成数据地址：
 
 ```text
-https://raw.githubusercontent.com/<owner>/<repo>/<full-release-commit-sha>/data/translations.zh-CN.json
+https://raw.githubusercontent.com/<owner>/<repo>/main/data/translations.zh-CN.json
 ```
 
-本地构建未同时获得仓库标识和完整提交 SHA 时不猜测用户名或引用，使用打包的内置词库，并在开发日志中说明远程刷新未配置。
+本地构建未同时获得仓库标识和受控词库引用时不猜测用户名或引用，使用打包的内置词库，并在开发日志中说明远程刷新未配置。生成器只接受 `main`，不接受任意分支、标签或用户输入。
 
 首版不接受用户输入的 URL，不跟随跨主机重定向，也不执行词库中的任何内容。
 
@@ -523,9 +523,9 @@ config/settings.json
 ### 14.3 合并后的处理
 
 - 校验脚本自动排序和检查。
-- 合并至 `main` 只形成下一版本候选，不改变已发布插件固定的词库快照。
-- 词库更新随新的插件版本和发布提交提供；GitHub 为该固定内容生成 ETag，插件在启动检查或手动刷新时校验同版本快照。
-- PluginDatabase 分发时同步推进固定插件提交指针，不允许数据变更绕过版本审核。
+- 合并至 `main` 后，GitHub Raw 提供新的完整词库快照；已安装插件在启动检查或手动刷新时通过 ETag/Last-Modified 获取变化。
+- 词库 PR 必须独立通过 AppID、名称、Schema、排序和仓库审查；远程文件不能包含代码、补丁、配置或下一跳 URL。
+- 插件代码和权限变化仍必须发布新版本并推进 PluginDatabase 固定提交指针；纯词库数据更新可独立发布。
 
 ## 15. 开发阶段与里程碑
 
@@ -637,24 +637,25 @@ config/settings.json
 
 交付门禁：本轮热门候选清单有可追溯的纳入/排除结论；所有入库数据通过自动化校验，抽样真机显示和搜索无错误。
 
-#### 15.5.2 锁定词库热更新策略
+#### 15.5.2 受控词库热更新策略
 
-- `v1.0.0` 使用构建时注入的同仓库 HTTPS Raw 地址，并固定到该发布对应的完整 Git 提交 SHA；启动时按条件请求并允许手动刷新。ETag/Last-Modified、8 秒超时、Schema 与业务校验、大小限制、原子缓存替换及内置词库回退保持为强制边界。
+- `v1.0.0` 使用构建时注入的同仓库 HTTPS Raw `main` 地址；启动时按条件请求并允许手动刷新。ETag/Last-Modified、8 秒超时、Schema 与业务校验、大小限制、原子缓存替换及内置词库回退保持为强制边界。
 - 远程词库只允许提供 AppID、原名和中文名等声明式数据，不得包含或驱动脚本、HTML、命令、插件设置、补丁目标或新的网络地址。
 - README 和隐私说明必须披露访问域名、请求时机、缓存位置与用途、不会上传的用户数据，以及完全离线时的行为。
 - `v1.0.0` 不开放任意自定义远程 URL。该能力会扩大 SSRF、局域网访问、供应链、隐私提示和用户支持范围；只有出现明确的多词库维护需求后，才在后续版本另行设计 HTTPS 限制、域名信任提示、重置入口和独立安全测试。
 
 交付门禁：固定远程源、缓存和离线回退完成代码与文档复核；从空缓存、304、热更新、损坏数据、不可达和超时场景再次通过真机验收。
 
-#### 15.5.3 PluginDatabase 兼容性预审
+#### 15.5.3 PluginDatabase 直接提交准备
 
 - 以提交时的官方 README、`PLUGIN-SUBMISSION` 模板、PluginTemplate 和已接受或正在审核的同类 Lua/Starlight 插件为准，不依赖本计划中的历史快照。
-- 确认 PluginDatabase 是否直接收录 Starlight 源码仓库、如何识别 `.star` 构建，以及根目录是否必须提供官方 Schema 的 `plugin.json`；如需补充元数据，必须与 `millennium.toml`、发布版本和 Lua 后端类型保持一致并纳入 CI 校验。
-- 向维护者明确披露：插件会读取与 PluginDatabase 固定插件代码相同提交 SHA 下的纯 JSON 词库；地址不可由用户或远程内容改变，后续 `main` 变化不会影响已发布插件。
-- 若不可变同提交请求仍不被接受，则仅使用随插件捆绑的词库；不得为了上架保留未披露的网络来源。
+- PluginDatabase Discussion #236 的预审询问长期未获回复，不再继续等待单独答复。2026-10-25 已确认数据库当前 CI 原生识别 `millennium.toml` 并直接打包 `.star`；完成项目自身门禁后按标准固定子模块形式提交正式 PR。
+- 提交改动只包含 PluginDatabase 的 `.gitmodules` 和 `plugins/steam-game-name-zh` 子模块指针；源码仓库保持 `millennium.toml`，不增加旧式 `plugin.json`。
+- 向维护者明确披露：插件会读取同仓库 `main` 下经 PR 审核的纯 JSON 完整词库；仓库、分支和路径由构建固定，不可由用户或远程内容改变，词库更新可以影响已发布插件。
+- 若正式评审不接受该受控远程词库，则关闭网络请求并仅使用随插件捆绑的词库；不得为了上架保留未披露的网络来源。
 - 完成官方模板要求的 Stable/Beta 自测、第三方 Stable/Beta 验证、两个其他插件 PR 的测试反馈及链接，并提供可复现的安装和核心功能测试步骤。
 
-交付门禁：元数据、构建形式、Lua 后端和远程数据策略均有官方规则或维护者答复支持，PluginDatabase 提交模板的每一项都能如实勾选。
+交付门禁：项目侧元数据、构建、Lua 后端、远程数据说明与测试证据完整，PluginDatabase 提交模板中由开发者负责的项目均能如实填写；存在流程差异时在正式 PR 中明确披露并等待维护者验收，不再以前置预审回复阻塞发布准备。
 
 #### 15.5.4 公共开源仓库与发布审计
 
@@ -678,7 +679,7 @@ config/settings.json
 | 名称翻译存在争议 | 社区维护成本增加 | 明确来源优先级、PR 讨论和可追溯修订历史 |
 | Millennium API 变化 | 构建或运行失效 | 锁定依赖、标注支持版本、升级前执行完整兼容测试 |
 | Millennium 刷新插件资源统计时使操作菜单锚点失效 | 启动期配置入口偏移或消失 | 上游报告、跨插件复验、披露已知问题；不使用延时掩盖宿主竞态 |
-| PluginDatabase 不接受远程词库请求 | 无法在线校验同版本词库快照 | 已固定到发布提交 SHA并完整内置；不接受时关闭请求、仅用包内词库 |
+| PluginDatabase 不接受受控远程词库请求 | 已发布插件无法独立取得词库更新 | 完整内置默认词库；正式评审不接受时关闭请求、仅用包内词库 |
 | 自定义词库地址扩大网络攻击面 | SSRF、隐私和供应链风险 | `v1.0.0` 不开放自定义 URL，后续仅在明确需求和独立安全设计后评估 |
 
 ## 17. 完成定义

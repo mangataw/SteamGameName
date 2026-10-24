@@ -10,9 +10,9 @@
 
 正式发布构建只访问以下由构建过程固定的 HTTPS 地址：
 
-`https://raw.githubusercontent.com/mangataw/SteamGameName/<发布提交的完整 SHA>/data/translations.zh-CN.json`
+`https://raw.githubusercontent.com/mangataw/SteamGameName/main/data/translations.zh-CN.json`
 
-其中提交 SHA 在构建发布产物时固定，不能由用户或远程内容修改。后续合入 `main` 的词库变化不会影响已经发布的插件；新词库随新的审核和发布提交提供。
+仓库和 `main` 引用在构建发布产物时固定，不能由用户或远程内容修改。经审核合入 `main` 的词库变化可以被已经发布的插件取得，不要求同步更新插件代码；因此远程文件始终是完整词库快照，而不是可执行增量或配置。
 
 请求发生在插件前端初始化完成后的自动检查，以及用户在设置页主动刷新词库时。插件使用 ETag 和 Last-Modified 条件请求，在内容未变化时接受 HTTP 304；请求超时为 8 秒。请求不包含游戏库、Steam ID、搜索词或插件设置。
 
@@ -26,7 +26,9 @@
 
 `%STEAM%\ext\data\cache\steam-game-name-zh\`
 
-其中 `catalog.json` 保存最后一次通过校验的词库，`metadata.json` 保存 ETag、Last-Modified、检查时间、成功更新时间和固定远程地址。显示模式由 Millennium 的插件配置存储管理。
+其中 `catalog.json` 保存最后一次通过校验的完整远程词库，`metadata.json` 保存 ETag、Last-Modified、检查时间、成功更新时间和固定远程地址。显示模式由 Millennium 的插件配置存储管理。
+
+缓存只会在其记录的远程地址与当前构建固定地址完全一致时加载。插件升级导致来源地址变化时会忽略旧缓存，优先使用新版包内词库，直到新来源成功通过校验并写入缓存。
 
 禁用或删除插件后，名称补丁不再生效。若需要同时删除缓存，可在 Steam 与 Millennium 完全退出后删除上述插件专用缓存目录；这不会修改 Steam 游戏文件或清单。
 

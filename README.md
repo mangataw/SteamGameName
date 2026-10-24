@@ -20,9 +20,9 @@ pnpm run package
 pnpm run verify:package -- release/steam-game-name-zh-v0.2.0.zip
 ```
 
-本地构建默认只使用打包词库。发布工作流注入同仓库 GitHub Raw 地址，并固定到该 Release 对应的完整 Git 提交 SHA；远程刷新不会越过已发布提交获取后续的 `main` 数据。
+本地构建默认只使用打包词库。发布工作流注入受控的同仓库 GitHub Raw `main` 词库地址；词库修正或新增条目合入 `main` 后，已安装插件可在下次启动或手动刷新时获取，不要求同步发布插件代码。远程地址不能由用户或下载内容修改。
 
-公共仓库的脱敏范围、隔离构建结果和 PluginDatabase 预审项见 [公共发布审计](docs/PUBLIC_RELEASE_AUDIT.md)。
+公共仓库的脱敏范围、隔离构建结果、远程数据政策核对和 PluginDatabase 当前提交格式见 [公共发布审计](docs/PUBLIC_RELEASE_AUDIT.md)。
 
 ## 安装与卸载
 
@@ -39,16 +39,16 @@ pnpm run verify:package -- release/steam-game-name-zh-v0.2.0.zip
 
 ## 发布与维护
 
-- `main` 保存随时可审查、可构建的代码；每个正式产物内置当次完整词库，并把远程词库固定到对应的发布提交。
+- `main` 保存随时可审查、可构建的代码和远程完整词库；每个正式产物内置当次完整词库，并从同仓库 `main` 获取后续经审核的词库更新。
 - `v*` 语义化版本标签触发 GitHub Actions，生成发布 ZIP 与 SHA-256 校验和。
-- 稳定测试完成后，将仓库作为子模块提交到 Millennium 官方 PluginDatabase；后续版本需要提交新的固定提交指针。
+- 稳定测试完成后，将仓库作为 `plugins/steam-game-name-zh` 子模块提交到 Millennium 官方 PluginDatabase；数据库当前会从根目录 `millennium.toml` 识别 Starlight 项目并构建 `.star`，无需旧式 `plugin.json`。后续插件代码版本需要提交新的固定提交指针。
 - 分支、提交、PR 和版本规则见 [Git 工作流](docs/GIT_WORKFLOW.md)。
 
 当前候选词库包含 692 条 AppID 映射。译名优先采用 Steam 官方简体中文名称，其次采用稳定、无歧义的社区常用译名；它们不代表发行商官方本地化。译名错误或存在更通行写法时，可按 [贡献指南](CONTRIBUTING.md) 提交 Issue 或 PR 修正。
 
 ## 隐私与故障排查
 
-插件只访问构建时固定的同仓库词库地址，不上传游戏库、Steam ID 或遥测。断网时继续使用最后一次有效缓存。若 Steam 更新造成左栏结构不兼容，补丁会匹配失败并安全降级；请附上 Steam 与 Millennium 版本提交 Issue，勿提供账户信息或完整本地路径。
+插件只访问构建时固定的同仓库 `main` 词库地址，不上传游戏库、Steam ID 或遥测。断网时继续使用最后一次有效缓存，没有缓存时使用包内词库。若 Steam 更新造成左栏结构不兼容，补丁会匹配失败并安全降级；请附上 Steam 与 Millennium 版本提交 Issue，勿提供账户信息或完整本地路径。
 
 完整的请求时机、访问域名、缓存位置和本地数据说明见 [隐私与网络行为](docs/PRIVACY.md)。安全问题请按 [安全政策](SECURITY.md) 报告；版本变化见 [更新日志](CHANGELOG.md)。
 

@@ -1,10 +1,17 @@
 # PluginDatabase Pre-review Draft
 
-This draft is intentionally limited to distribution compatibility and the catalog data policy. It is not a plugin submission and has not been sent externally.
+This text was submitted as PluginDatabase Discussion #236 on 2026-08-26. It received no maintainer reply, so the project no longer treats a separate pre-review response as a release prerequisite. This file now preserves the historical questions and records the current public evidence that will be cited in the formal submission.
+
+## 2026-10-25 follow-up
+
+- The current PluginDatabase workflows detect a root `millennium.toml`, install their configured `@steambrew/starlight`, and run `starlight pack -o dist --release --source-commit <commit>`. The legacy `plugin.json` path is now only used for loose plugins. No compatibility `plugin.json` is needed for this repository.
+- Current Starlight submissions such as PluginDatabase PRs #235 and #241 use the normal database form: add the source repository as a submodule under `plugins/<slug>`, update `.gitmodules`, and pin the submodule to the reviewed commit.
+- The submission guidelines do not explicitly prohibit runtime network data. The accepted database currently includes plugins that request public data at runtime, including `protondb-library-badges`, `sortium`, and an RSS feed plugin. This is evidence that remote data is reviewed case by case, not categorically rejected.
+- The guidelines do state that repository changes must advance the PluginDatabase pointer before users receive code updates. A mutable data-only `main` catalog is therefore an important review disclosure even though it contains no executable code. Until maintainers explicitly reject it, this project keeps the controlled catalog design and its bundled/offline fallback.
 
 ## Context
 
-Steam Game Name Zh is a Windows-only Millennium 3.4+ plugin compiled with Starlight 1.1.3. It uses a Lua backend and produces one verified, unsigned `steam-game-name-zh.star` artifact. The source repository contains `millennium.toml` and follows the current official PluginTemplate layout.
+Steam Game Name Zh is a Windows-only Millennium 3.4+ plugin compiled with Starlight. It uses a Lua backend and produces one verified, unsigned `steam-game-name-zh.star` artifact. The source repository contains `millennium.toml` and follows the current official PluginTemplate layout.
 
 The plugin changes only Steam's library sidebar display and filtering. It does not read credentials, upload library data, collect telemetry, or ship custom binaries.
 
@@ -15,7 +22,7 @@ At the time of testing:
 - PluginTemplate commit: `af0a07c7c90de902333ab5268e53ac1bf73bed36`
 - PluginDatabase commit: `97403bdb67bce6650734bf8d1963989af59d3b46`
 
-The template contains `millennium.toml` and no `plugin.json`. PluginDatabase's current `scripts/build/prepare-dist.sh` still requires root `plugin.json` and exits before preparing the distribution when it is absent.
+The template contained `millennium.toml` and no `plugin.json`. At that historical snapshot, PluginDatabase's `scripts/build/prepare-dist.sh` still required root `plugin.json` and exited before preparing the distribution when it was absent.
 
 We reproduced this after a successful Starlight build by running the current database script unchanged. It exited with code 1 and:
 
@@ -23,19 +30,19 @@ We reproduced this after a successful Starlight build by running the current dat
 plugin.json was not found. It is required for plugins to have.
 ```
 
-What is the intended submission and distribution path for a Starlight `.star` plugin? Should the repository wait for PluginDatabase's build pipeline to support the current template, or is there a maintainer-approved compatibility manifest/layout?
+This question is now resolved by the current PluginDatabase pipeline: Starlight projects are selected by `millennium.toml` and packed directly. The formal submission must use the standard pinned-submodule PR and must not add a guessed legacy manifest.
 
-## Question 2: immutable remote data catalog
+## Question 2: controlled remote data catalog
 
-Each release build can make conditional HTTPS requests to a same-repository URL pinned to the full commit SHA used to build that release:
+The current release plan makes conditional HTTPS requests to a build-fixed same-repository catalog URL:
 
 ```text
-https://raw.githubusercontent.com/mangataw/SteamGameName/<full-release-commit-sha>/data/translations.zh-CN.json
+https://raw.githubusercontent.com/mangataw/SteamGameName/main/data/translations.zh-CN.json
 ```
 
-The URL is injected at build time from GitHub Actions' full `github.sha` and cannot be changed by users or downloaded content. Later changes to `main` cannot affect an already released plugin. Requests do not follow redirects, verify TLS, time out after 8 seconds, and send no Steam ID, library, search, settings, or telemetry data. Responses are size-limited and validated as Schema version 1 AppID-to-Chinese-name data; values cannot contain HTML, control characters, code, commands, patches, or another URL. Invalid responses never replace the last valid cache or bundled catalog.
+The repository, `main` ref, and path are injected at build time and cannot be changed by users or downloaded content. Reviewed catalog changes merged to `main` can update an already released plugin without changing its code. Requests do not follow redirects, verify TLS, time out after 8 seconds, and send no Steam ID, library, search, settings, or telemetry data. Responses are size-limited and validated as Schema version 1 AppID-to-Chinese-name data; values cannot contain HTML, control characters, code, commands, patches, or another URL. Invalid responses never replace the last valid cache or bundled catalog.
 
-Is this immutable, data-only same-commit request acceptable for PluginDatabase review, or must the plugin operate exclusively from its bundled copy with no network request? Every catalog update will already require a new plugin release and PluginDatabase commit-pointer update.
+Is this controlled, data-only same-repository request acceptable for PluginDatabase review, or must the plugin operate exclusively from its bundled copy with no network request? Catalog-only changes are intended to ship through reviewed `main` updates without a new plugin release; code, permissions, or network-location changes still require a versioned plugin update.
 
 ## Available evidence
 
@@ -45,4 +52,4 @@ Is this immutable, data-only same-commit request acceptable for PluginDatabase r
 - Stable-channel Windows 11 functional, failure-mode, offline/cache, uninstall and release-artifact verification
 - Published privacy/network behavior and security policy
 
-The project will not add a guessed legacy manifest or submit to PluginDatabase until the supported Starlight path is confirmed.
+The project will not add a guessed legacy manifest. Because the separate pre-review received no response, the project will complete its own release gates and disclose the controlled remote catalog directly in the formal PluginDatabase PR. If maintainers explicitly reject that data-update model, the release configuration will set `remote_url = nil` and retain only the bundled catalog.
