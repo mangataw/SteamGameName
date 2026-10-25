@@ -108,7 +108,7 @@
 - [x] 保留 ETag、Last-Modified、8 秒超时、TLS 校验、禁重定向、5 MiB 上限、Schema/业务校验、原子缓存替换与前端热更新。
 - [x] 缓存与构建固定远程 URL 绑定；来源变化时忽略旧缓存和旧条件请求标识，避免旧的 184 条 SHA 缓存离线覆盖新的 692 条内置词库。
 - [x] 更新发布工作流、源配置生成器、仓库门禁、隐私说明、README、计划和正式提交披露材料；新增任意 ref 拒绝测试。
-- [x] 60 项 Vitest、4 组 Lua 测试、837 条词库校验和仓库门禁通过。
+- [x] 60 项 Vitest、4 组 Lua 测试、994 条词库校验和仓库门禁通过。
 - [x] 核对官方提交指南、当前 PluginDatabase CI/PR 模板、数据库 `.gitmodules` 及近期 Starlight PR；未发现远程数据明确禁令，且已收录插件存在运行时远程 API/数据先例。
 - [x] 已将 692 条完整词库、兼容修复和受控远程同步实现分笔合入远端 `main`。
 - [ ] 合并后构建并安装远程同步候选包，依次复验首次 200、未变化 304、远程新增词条热更新、非法数据拒绝和离线回退。
@@ -120,8 +120,8 @@
 - [x] 确认社区提交前有必要增加一轮独立的热门词库扩充，但不以覆盖率为由强译品牌、软件、Demo 或译名未稳定的新作。
 - [x] 记录 14 个第一批高置信候选及暂缓规则，见 [`catalog-imports/steam-top-100-gap-2026-10-25.md`](catalog-imports/steam-top-100-gap-2026-10-25.md)。
 - [x] 合并当前榜单与 2021–2025 年度榜单共 800 个唯一 AppID，逐项核对首批高置信候选并新增 22 条，词库增至 714 条；见 [`catalog-imports/steam-public-curated-2026-10-25.md`](catalog-imports/steam-public-curated-2026-10-25.md) 与对应 JSON 快照。
-- [x] 对 800 个来源候选完成商店类型与简中名称全量核查；从 354 个未覆盖纯外文游戏中继续新增 124 条，并移除 1 条已由 Steam 原生中文覆盖的冗余映射，词库增至 837 条；见 [`catalog-imports/steam-public-full-audit-2026-10-25.md`](catalog-imports/steam-public-full-audit-2026-10-25.md)。
-- [x] 837 条词库通过完整检查、构建和 `.star` 产物校验。
+- [x] 对 800 个来源候选完成全量逐项决策；354 个未覆盖纯外文游戏中新增 281 条、明确保留原名 73 条，并移除 1 条已由 Steam 原生中文覆盖的冗余映射，词库增至 994 条；见 [`catalog-imports/steam-public-full-audit-2026-10-25.md`](catalog-imports/steam-public-full-audit-2026-10-25.md)。
+- [x] 994 条词库通过完整检查、构建和 `.star` 产物校验。
 - [ ] 合入后复验远程词库更新、包内完整词库、中文显示和搜索，再冻结 PluginDatabase 首次提交指针。
 
 ### `v0.2.0` 开发验收

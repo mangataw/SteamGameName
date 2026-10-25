@@ -16,12 +16,16 @@ interface AuditSnapshot {
 
 interface ImportEntry {
   appid: number;
-  originalName: string;
+  originalName?: string;
   chineseName: string;
 }
 
 interface CatalogImport {
   games: ImportEntry[];
+  keptOriginal?: Array<{
+    appid: number;
+    reason: string;
+  }>;
 }
 
 const [catalogPath, importPath, auditPath] = process.argv.slice(2);
@@ -51,10 +55,10 @@ for (const entry of catalogImport.games) {
     throw new Error(`AppID ${entry.appid} is not an available game in the audit snapshot`);
   }
   if (candidate.sources.length === 0) throw new Error(`AppID ${entry.appid} has no candidate source`);
-  if (candidate.simplifiedChineseName !== entry.originalName) {
+  if (entry.originalName !== undefined && candidate.simplifiedChineseName !== entry.originalName) {
     throw new Error(`AppID ${entry.appid} name mismatch: expected ${JSON.stringify(candidate.simplifiedChineseName)}`);
   }
-  if (candidate.hasHan || /[\u3400-\u9fff]/u.test(entry.originalName)) {
+  if (candidate.hasHan || candidate.simplifiedChineseName === null || /[\u3400-\u9fff]/u.test(candidate.simplifiedChineseName)) {
     throw new Error(`AppID ${entry.appid} already has a Han display name`);
   }
   if (!/[\u3400-\u9fff]/u.test(entry.chineseName)) {
@@ -67,6 +71,18 @@ for (const entry of catalogImport.games) {
   imported += 1;
 }
 
+for (const entry of catalogImport.keptOriginal ?? []) {
+  if (!Number.isInteger(entry.appid) || entry.appid <= 0 || seen.has(entry.appid)) {
+    throw new Error(`Invalid or duplicate review AppID: ${entry.appid}`);
+  }
+  seen.add(entry.appid);
+  const candidate = auditByAppId.get(entry.appid);
+  if (!candidate || candidate.status !== "available" || candidate.type !== "game" || candidate.hasHan !== false) {
+    throw new Error(`AppID ${entry.appid} is not an eligible foreign-name game in the audit snapshot`);
+  }
+  if (entry.reason.trim().length === 0) throw new Error(`AppID ${entry.appid} has no keep-original reason`);
+}
+
 catalog.games = Object.fromEntries(Object.entries(catalog.games).sort(([left], [right]) => Number(left) - Number(right)));
 await writeFile(catalogPath, `${JSON.stringify(catalog, null, 2)}\n`, "utf8");
-console.log(`Imported ${imported} public catalog translations; ${catalogImport.games.length - imported} already matched`);
+console.log(`Imported ${imported} public catalog translations; ${catalogImport.games.length - imported} already matched; reviewed ${catalogImport.keptOriginal?.length ?? 0} retained Steam names`);
