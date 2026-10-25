@@ -44,7 +44,7 @@ pnpm run verify:package -- release/steam-game-name-zh-v0.2.0.zip
 - 稳定测试完成后，将仓库作为 `plugins/steam-game-name-zh` 子模块提交到 Millennium 官方 PluginDatabase；数据库当前会从根目录 `millennium.toml` 识别 Starlight 项目并构建 `.star`，无需旧式 `plugin.json`。后续插件代码版本需要提交新的固定提交指针。
 - 分支、提交、PR 和版本规则见 [Git 工作流](docs/GIT_WORKFLOW.md)。
 
-当前候选词库包含 692 条 AppID 映射。译名优先采用 Steam 官方简体中文名称，其次采用稳定、无歧义的社区常用译名；它们不代表发行商官方本地化。译名错误或存在更通行写法时，可按 [贡献指南](CONTRIBUTING.md) 提交 Issue 或 PR 修正。
+当前 `main` 候选词库包含 994 条 AppID 映射。面向公共发布的 800 个热门来源候选已经全部完成纳入、排除或保留原名决策；译名优先采用 Steam 官方简体中文名称，其次采用稳定、无歧义的社区常用译名，它们不代表发行商官方本地化。译名错误或存在更通行写法时，可按 [贡献指南](CONTRIBUTING.md) 提交 Issue 或 PR 修正。
 
 ## 隐私与故障排查
 

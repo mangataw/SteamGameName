@@ -23,7 +23,9 @@ pnpm run package
 pnpm run verify:package -- release/steam-game-name-zh-v0.2.0.zip
 ```
 
-结果：冻结锁文件安装成功；TypeScript、Lua 静态检查、60 项 Vitest、4 组 Lua 后端测试、692 条词库校验、Starlight 四区段校验和 ZIP 内容校验全部通过。
+初次隔离审计结果：冻结锁文件安装成功；TypeScript、Lua 静态检查、60 项 Vitest、4 组 Lua 后端测试、当时的 692 条词库校验、Starlight 四区段校验和 ZIP 内容校验全部通过。
+
+当前 `main` 已扩充为 994 条词库，并在工作区和 GitHub CI 通过完整检查、正式构建及 `.star` 校验；800 个公开来源候选的审核快照、最终纳入清单和保留原名理由已经归档在 `docs/catalog-imports/`。升级 `v1.0.0-rc.1` 时必须再次执行干净隔离克隆、冻结锁文件安装、ZIP 内容及安装复验，不以旧版隔离结果替代 RC 门禁。
 
 首次隔离验证发现 Windows Git 自动换行与 `starlight lsp` 写回 LF 会令三个内容未变化的配置文件显示为已修改。仓库现通过 `.gitattributes` 固定文本文件为 LF，消除该伪脏状态。
 
