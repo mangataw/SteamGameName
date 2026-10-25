@@ -20,7 +20,8 @@ pnpm run check
 pnpm run build
 pnpm run verify:star
 pnpm run package
-pnpm run verify:package -- release/steam-game-name-zh-v0.2.0.zip
+$version = (Get-Content package.json | ConvertFrom-Json).version
+pnpm run verify:package -- "release/steam-game-name-zh-v$version.zip"
 ```
 
 初次隔离审计结果：冻结锁文件安装成功；TypeScript、Lua 静态检查、60 项 Vitest、4 组 Lua 后端测试、当时的 692 条词库校验、Starlight 四区段校验和 ZIP 内容校验全部通过。

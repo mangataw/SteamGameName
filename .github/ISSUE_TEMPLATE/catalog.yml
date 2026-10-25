@@ -1,0 +1,46 @@
+name: 词库建议
+description: 建议新增、修正或删除一个 Steam 游戏中文名
+title: "[词库] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        请在标题的 `[词库]` 后填写“Steam 原名 / 建议中文名”。一个 Issue 建议只提交一个游戏；作者会负责核对并更新词库。
+  - type: dropdown
+    id: action
+    attributes:
+      label: 改动类型
+      options:
+        - 新增映射
+        - 修正映射
+        - 删除映射
+    validations:
+      required: true
+  - type: input
+    id: app-id
+    attributes:
+      label: Steam AppID
+      description: 可从 Steam 商店页面地址中找到，例如 `/app/620/` 中的 `620`。
+      placeholder: "620"
+    validations:
+      required: true
+  - type: input
+    id: original-name
+    attributes:
+      label: Steam 当前原名
+      placeholder: Portal 2
+    validations:
+      required: true
+  - type: input
+    id: proposed-name
+    attributes:
+      label: 建议简体中文名
+      description: 删除映射时填写“删除并保留 Steam 原名”。
+      placeholder: 传送门 2
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: 补充说明（可选）
+      description: 修正或删除时可填写当前词库名称和原因；有译名来源、版本后缀说明或相关链接时也可附上。

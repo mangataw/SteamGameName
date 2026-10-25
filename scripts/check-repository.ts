@@ -21,7 +21,16 @@ if (forbiddenTracked.length > 0) {
   throw new Error(`Forbidden generated or sensitive files are tracked:\n${forbiddenTracked.join("\n")}`);
 }
 
-for (const required of ["LICENSE", "CHANGELOG.md", "CONTRIBUTING.md", "SECURITY.md", "docs/PRIVACY.md"]) {
+for (const required of [
+  "LICENSE",
+  "CHANGELOG.md",
+  "CONTRIBUTING.md",
+  "SECURITY.md",
+  "docs/PRIVACY.md",
+  "docs/CATALOG_CONTRIBUTIONS.md",
+  ".github/ISSUE_TEMPLATE/catalog.yml",
+  ".github/PULL_REQUEST_TEMPLATE.md",
+]) {
   if (!trackedFiles.includes(required)) throw new Error(`Required public repository file is not tracked: ${required}`);
 }
 

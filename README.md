@@ -1,15 +1,67 @@
 # Steam 游戏名中文化
 
-Millennium / SteamBrew 插件，按 Steam AppID 将 Windows Steam 桌面客户端游戏库左侧列表中的游戏名称显示为简体中文或双语，并允许使用中文译名或 Steam 英文原名搜索。默认格式为 `中文名 | 原名`；Steam 原名已经包含汉字时保持不变。
+Millennium / SteamBrew 插件，按 Steam AppID 将 Steam 游戏库左侧列表中的游戏名称显示为简体中文，并允许用中文译名搜索。插件不修改 Steam 清单、数据库或游戏文件。
 
-## 要求
+## 功能
 
-- Windows 10/11
-- Steam 稳定版
-- Millennium 3.4.0 或更高版本
-- Node.js 24 与 pnpm 11（仅开发构建需要）
+- 默认显示 `中文名 | Steam 原名`，也可切换为仅中文名，立即生效；
+- 中文译名、Steam 原名和 AppID 均可用于过滤游戏库左栏；
+- Steam 当前名称已经含有汉字时保持原样；
+- 每个安装包内置完整词库，断网时仍能显示和搜索；
+- 可从构建时固定的同仓库 `main` 词库取得经审核的纯数据更新；
+- Steam UI 结构不兼容时安全停用对应补丁，不阻止 Steam 启动。
 
-## 开发
+当前 `main` 内置 994 条 AppID 映射。译名优先采用官方简体中文名称，其次采用稳定、无歧义的社区常用译名；社区译名不代表发行商官方本地化。
+
+## 兼容范围
+
+- Windows 11；
+- Steam 桌面模式、简体中文界面；
+- Steam Stable 是当前正式验证目标，Steam Beta 仍需在 `v1.0.0-rc.1` 前完成最终复验；
+- Millennium 3.4.0 或更高版本。
+
+Windows 10、Steam 英文界面、Big Picture、Steam Deck、Linux、macOS、非 Steam 快捷方式和游戏库左栏以外的界面不在当前发布保证范围内。
+
+## 安装、更新与卸载
+
+本项目不是独立 Steam 游戏，也不通过 Steam Workshop 分发。
+
+1. 安装并启动 Millennium。
+2. 从 [GitHub Releases](https://github.com/mangataw/SteamGameName/releases) 下载 ZIP，并核对同名 `.sha256` 文件。
+3. 将 ZIP 中唯一的 `steam-game-name-zh.star` 放入 Steam 的 `plugins` 目录；更新时覆盖旧文件。
+4. 完整重启 Steam，在 Millennium 的插件页面启用“Steam 游戏名中文化”。
+
+禁用或删除 `.star` 文件并重启 Steam 后，名称会恢复为 Steam 原始值。若还要清除词库缓存，请先完全退出 Steam 和 Millennium，再按 [隐私与网络行为](docs/PRIVACY.md) 中的路径删除本插件专用缓存目录。
+
+当前已发布版本为 `v0.2.0`；`main` 正在准备 `v1.0.0-rc.1`，不等同于已发布安装包。版本变化见 [更新日志](CHANGELOG.md)，当前门禁见 [项目状态](docs/PROJECT_STATUS.md)。
+
+## 设置与故障排查
+
+设置页可以切换显示模式、查看词库来源和条目数，并手动刷新词库。
+
+- 名称没有变化：确认插件已启用并完整重启 Steam；再查看设置页是否提示当前 Steam 结构不兼容。
+- 中文搜索失效但名称仍正常：显示与搜索是独立补丁，Steam 更新可能只影响搜索；请记录 Steam 与 Millennium 版本后提交 Bug。
+- 刷新失败：现有有效缓存或包内词库会继续使用；检查网络后可再次手动刷新。
+- “配置”菜单启动后偏移或消失：这是 Millennium 启动期宿主竞态，请等待资源统计稳定后再打开。详情见 [已知问题](docs/KNOWN_ISSUES.md)。
+
+提交 Bug 时请提供复现步骤、Steam 版本、Millennium 版本和设置页错误状态，不要附带 Steam ID、Cookie、令牌、私人游戏库或含用户名的完整路径。
+
+## 网络、隐私与安全
+
+正式构建只访问构建时固定的同仓库 HTTPS Raw `main` 词库；用户和远程内容都不能更改地址。插件不上传游戏库、Steam ID、搜索内容或遥测。远程响应必须通过大小、Schema 和业务规则校验，失败内容不会覆盖有效缓存。
+
+请求时机、域名、缓存位置和离线行为见 [隐私与网络行为](docs/PRIVACY.md)。安全漏洞请按 [安全政策](SECURITY.md) 私下报告，不要在公开 Issue 中披露利用细节。
+
+## 贡献
+
+- 普通词库新增、修正或删除：使用“词库建议”Issue 模板，提供 AppID、Steam 原名和建议中文名；格式见 [词库建议与贡献](docs/CATALOG_CONTRIBUTIONS.md)；
+- 已经修改仓库文件：按 PR 模板提交变更说明和验证结果；
+- 代码与文档：阅读 [贡献指南](CONTRIBUTING.md) 和 [Git 工作流](docs/GIT_WORKFLOW.md)；
+- 当前架构、发布门禁和历史验收证据：见 [项目状态](docs/PROJECT_STATUS.md) 与 [公共发布审计](docs/PUBLIC_RELEASE_AUDIT.md)。
+
+## 本地开发
+
+开发构建需要 Node.js 24 和 pnpm 11。本地构建默认不配置远程地址，只使用包内词库。
 
 ```powershell
 pnpm install --frozen-lockfile
@@ -17,39 +69,8 @@ pnpm run check
 pnpm run build
 pnpm run verify:star
 pnpm run package
-pnpm run verify:package -- release/steam-game-name-zh-v0.2.0.zip
+$version = (Get-Content package.json | ConvertFrom-Json).version
+pnpm run verify:package -- "release/steam-game-name-zh-v$version.zip"
 ```
 
-本地构建默认只使用打包词库。发布工作流注入受控的同仓库 GitHub Raw `main` 词库地址；词库修正或新增条目合入 `main` 后，已安装插件可在下次启动或手动刷新时获取，不要求同步发布插件代码。远程地址不能由用户或下载内容修改。
-
-公共仓库的脱敏范围、隔离构建结果、远程数据政策核对和 PluginDatabase 当前提交格式见 [公共发布审计](docs/PUBLIC_RELEASE_AUDIT.md)。
-
-## 安装与卸载
-
-本项目不是独立 Steam 游戏，也不通过 Steam Workshop 分发；它是由 Millennium 加载的 Steam 客户端插件。
-
-1. 安装并启动 Millennium。
-2. 从本仓库 GitHub Releases 下载 ZIP，并核对同名 `.sha256` 文件。
-3. 将 ZIP 中的 `steam-game-name-zh.star` 文件放入 Steam 的 `plugins` 目录。
-4. 重启 Steam，在 Millennium 的插件设置中启用“Steam 游戏名中文化”。
-
-禁用或删除插件后，Hooking API 不再应用补丁，Steam 将显示原始名称；插件不会修改 Steam 清单或数据库。
-
-当前已发布版本为 `v0.2.0`，增加了与显示模式解耦的左栏中文搜索。中文译名、Steam 英文原名和 AppID 搜索，以及 Windows 11 真机、5,000 条本地性能门禁、独立失配降级、空缓存安装和 GitHub Release 正式产物复验均已通过。
-
-## 发布与维护
-
-- `main` 保存随时可审查、可构建的代码和远程完整词库；每个正式产物内置当次完整词库，并从同仓库 `main` 获取后续经审核的词库更新。
-- `v*` 语义化版本标签触发 GitHub Actions，生成发布 ZIP 与 SHA-256 校验和。
-- 稳定测试完成后，将仓库作为 `plugins/steam-game-name-zh` 子模块提交到 Millennium 官方 PluginDatabase；数据库当前会从根目录 `millennium.toml` 识别 Starlight 项目并构建 `.star`，无需旧式 `plugin.json`。后续插件代码版本需要提交新的固定提交指针。
-- 分支、提交、PR 和版本规则见 [Git 工作流](docs/GIT_WORKFLOW.md)。
-
-当前 `main` 候选词库包含 994 条 AppID 映射。面向公共发布的 800 个热门来源候选已经全部完成纳入、排除或保留原名决策；译名优先采用 Steam 官方简体中文名称，其次采用稳定、无歧义的社区常用译名，它们不代表发行商官方本地化。译名错误或存在更通行写法时，可按 [贡献指南](CONTRIBUTING.md) 提交 Issue 或 PR 修正。
-
-## 隐私与故障排查
-
-插件只访问构建时固定的同仓库 `main` 词库地址，不上传游戏库、Steam ID 或遥测。断网时继续使用最后一次有效缓存，没有缓存时使用包内词库。若 Steam 更新造成左栏结构不兼容，补丁会匹配失败并安全降级；请附上 Steam 与 Millennium 版本提交 Issue，勿提供账户信息或完整本地路径。
-
-完整的请求时机、访问域名、缓存位置和本地数据说明见 [隐私与网络行为](docs/PRIVACY.md)。安全问题请按 [安全政策](SECURITY.md) 报告；版本变化见 [更新日志](CHANGELOG.md)。
-
-已知的 Millennium 宿主问题：Steam/Millennium 刚启动时，插件卡片约每 3 秒更新大小和 CPU 统计，已打开的插件操作菜单可能失去定位锚点、移动到窗口左上角或一闪后消失。该行为已在本插件和 Extendium 上交叉复现，不是本插件词库或设置页面的定时刷新。请等待启动稳定后再打开“配置”；证据、归因和跟踪方案见 [已知问题](docs/KNOWN_ISSUES.md)。
+正式标签构建会注入固定词库地址并生成 ZIP 与 SHA-256。PluginDatabase 提交流程、远程数据披露和可复现构建结论保留在 [公共发布审计](docs/PUBLIC_RELEASE_AUDIT.md)，不在 README 重复维护。

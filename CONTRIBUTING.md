@@ -1,8 +1,20 @@
 # 贡献指南
 
-新增或修正 `data/translations.zh-CN.json` 时，请提供 AppID、Steam 当前原名、建议简体中文名及来源。优先采用 Steam 官方简体中文名称；没有官方名称时，可采用稳定、无歧义的社区常用译名，并注明依据。文件须保持 AppID 数值升序。
+## 词库贡献
 
-词库属于社区维护的显示映射，不声称所有名称均为发行商官方译名。发现错译、版本后缀不准确或存在更通行写法时，可以提交公开 Issue；有争议的译名应先讨论，无法形成稳定结论时保留原名而不强行翻译。
+普通用户新增、修正或删除游戏中文名时，请直接使用“词库建议”Issue 模板，只需提供改动类型、AppID、Steam 当前原名和建议中文名。详细格式见 [词库建议与贡献](docs/CATALOG_CONTRIBUTIONS.md)。
+
+PR 面向已经实际修改仓库文件的开发者或贡献者，需要提供来源或选择理由并通过检查。词库 PR 不得混入代码、配置或远程地址变更。
+
+词库属于社区维护的显示映射，不声称所有名称均为发行商官方译名。无法形成稳定结论时保留 Steam 原名，不为提高覆盖率而强行翻译，也不为 Steam 当前已经包含汉字的名称添加冗余映射。
+
+## 代码与文档贡献
+
+代码变更应说明问题、实现边界和测试范围；影响补丁、缓存、远程更新或插件生命周期的变更，需要补充对应自动化测试和真机验证记录。请勿在公开内容中提交账户信息、私人游戏库字段、密钥、缓存、构建产物或机器特定路径。
+
+完整的分支、提交、PR 与发布规则见 [Git 工作流](docs/GIT_WORKFLOW.md)。
+
+## 提交前检查
 
 提交前运行：
 
@@ -12,9 +24,8 @@ pnpm run check
 pnpm run build
 pnpm run verify:star
 pnpm run package
-pnpm run verify:package -- release/steam-game-name-zh-v0.2.0.zip
+$version = (Get-Content package.json | ConvertFrom-Json).version
+pnpm run verify:package -- "release/steam-game-name-zh-v$version.zip"
 ```
 
-词库不得包含 HTML、控制字符、机器广告文案或无汉字译名。代码变更还应说明测试范围；影响补丁、缓存、远程更新或插件生命周期的变更，需要补充对应自动化测试和真机验证记录。
-
-完整的分支、提交、PR 与发布规则见 [Git 工作流](docs/GIT_WORKFLOW.md)。
+只修改词库时至少运行 `pnpm run check`；CI 会继续执行构建、`.star` 和发布包验证。不要提交 `.star`、ZIP、缓存或其他生成文件。
