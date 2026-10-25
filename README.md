@@ -17,7 +17,7 @@ Millennium / SteamBrew 插件，按 AppID 为 Steam 游戏库左侧列表显示�
 
 - Windows 11；
 - Steam 桌面模式、简体中文界面；
-- Steam Stable 是当前正式验证目标，Steam Beta 仍需在 `v1.0.0-rc.1` 前完成最终复验；
+- Steam Stable 是正式支持范围；Steam Beta 仅进行 PluginDatabase 准入所需的兼容性冒烟测试，不承诺持续支持；
 - Millennium 3.4.0 或更高版本。
 
 Windows 10、Steam 英文界面、Big Picture、Steam Deck、Linux、macOS、非 Steam 快捷方式和游戏库左栏以外的界面不在当前发布保证范围内。
@@ -33,7 +33,7 @@ Windows 10、Steam 英文界面、Big Picture、Steam Deck、Linux、macOS、非
 
 禁用或删除 `.star` 文件并重启 Steam 后，名称会恢复为 Steam 原始值。若还要清除词库缓存，请先完全退出 Steam 和 Millennium，再按 [隐私与网络行为](docs/PRIVACY.md) 中的路径删除本插件专用缓存目录。
 
-当前已发布版本为 `v0.2.0`；`main` 正在准备 `v1.0.0-rc.1`，不等同于已发布安装包。版本变化见 [更新日志](CHANGELOG.md)，当前门禁见 [项目状态](docs/PROJECT_STATUS.md)。
+当前稳定版本为 `v0.2.0`，当前预发布版本为 `v1.0.0-rc.1`。版本变化见 [更新日志](CHANGELOG.md)，当前门禁见 [项目状态](docs/PROJECT_STATUS.md)。
 
 ## 设置与故障排查
 
