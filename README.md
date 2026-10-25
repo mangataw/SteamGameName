@@ -1,6 +1,6 @@
 # Steam 游戏名中文化
 
-Millennium / SteamBrew 插件，按 Steam AppID 将 Steam 游戏库左侧列表中的游戏名称显示为简体中文，并允许用中文译名搜索。插件不修改 Steam 清单、数据库或游戏文件。
+Millennium / SteamBrew 插件，按 AppID 为 Steam 游戏库左侧列表显示简体中文或双语名称，并支持中文、Steam 原名和 AppID 搜索。插件不修改 Steam 清单、数据库或游戏文件。
 
 ## 功能
 
