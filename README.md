@@ -33,7 +33,7 @@ Windows 10、Steam 英文界面、Big Picture、Steam Deck、Linux、macOS、非
 
 禁用或删除 `.star` 文件并重启 Steam 后，名称会恢复为 Steam 原始值。若还要清除词库缓存，请先完全退出 Steam 和 Millennium，再按 [隐私与网络行为](docs/PRIVACY.md) 中的路径删除本插件专用缓存目录。
 
-当前稳定版本为 `v0.2.0`，当前预发布版本为 `v1.0.0-rc.1`。版本变化见 [更新日志](CHANGELOG.md)，当前门禁见 [项目状态](docs/PROJECT_STATUS.md)。
+当前稳定版本为 `v1.0.0`。版本变化见 [更新日志](CHANGELOG.md)，当前门禁见 [项目状态](docs/PROJECT_STATUS.md)。
 
 ## 设置与故障排查
 
