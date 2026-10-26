@@ -17,19 +17,21 @@ Millennium / SteamBrew 插件，按 AppID 为 Steam 游戏库左侧列表显示�
 
 - Windows 11；
 - Steam 桌面模式、简体中文界面；
-- Steam Stable 是正式支持范围；Steam Beta 仅进行 PluginDatabase 准入所需的兼容性冒烟测试，不承诺持续支持；
+- Steam Stable 是正式支持范围；Steam Beta 仅进行尽力而为的兼容性冒烟测试，不承诺持续支持；
 - Millennium 3.4.0 或更高版本。
 
 Windows 10、Steam 英文界面、Big Picture、Steam Deck、Linux、macOS、非 Steam 快捷方式和游戏库左栏以外的界面不在当前发布保证范围内。
 
 ## 安装、更新与卸载
 
-本项目不是独立 Steam 游戏，也不通过 Steam Workshop 分发。
+本项目不是独立 Steam 游戏，也不通过 Steam Workshop 或 Millennium PluginDatabase 分发。当前唯一支持的分发方式是从 GitHub Releases 下载并手动安装；目标电脑可以完全离线使用包内词库。这里的“手动/离线安装”描述安装渠道，不会强制关闭插件已披露的可选远程词库检查。
 
 1. 安装并启动 Millennium。
 2. 从 [GitHub Releases](https://github.com/mangataw/SteamGameName/releases) 下载 ZIP，并核对同名 `.sha256` 文件。
 3. 将 ZIP 中唯一的 `steam-game-name-zh.star` 放入 Steam 的 `plugins` 目录；更新时覆盖旧文件。
 4. 完整重启 Steam，在 Millennium 的插件页面启用“Steam 游戏名中文化”。
+
+需要在离线电脑安装、核对 SHA-256、更新或卸载时，请按 [手动与离线安装指南](docs/MANUAL_INSTALLATION.md) 操作。插件代码不会自动更新；升级版本时需要重新下载并覆盖 `.star` 文件。
 
 禁用或删除 `.star` 文件并重启 Steam 后，名称会恢复为 Steam 原始值。若还要清除词库缓存，请先完全退出 Steam 和 Millennium，再按 [隐私与网络行为](docs/PRIVACY.md) 中的路径删除本插件专用缓存目录。
 
@@ -73,4 +75,4 @@ $version = (Get-Content package.json | ConvertFrom-Json).version
 pnpm run verify:package -- "release/steam-game-name-zh-v$version.zip"
 ```
 
-正式标签构建会注入固定词库地址并生成 ZIP 与 SHA-256。PluginDatabase 提交流程、远程数据披露和可复现构建结论保留在 [公共发布审计](docs/PUBLIC_RELEASE_AUDIT.md)，不在 README 重复维护。
+正式标签构建会注入固定词库地址并生成 ZIP 与 SHA-256。远程数据边界、可复现构建与发布审计保留在 [公共发布审计](docs/PUBLIC_RELEASE_AUDIT.md)，不在 README 重复维护。

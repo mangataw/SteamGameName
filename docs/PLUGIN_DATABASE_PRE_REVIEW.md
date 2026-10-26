@@ -1,6 +1,6 @@
-# PluginDatabase Pre-review Draft
+# Archived PluginDatabase Pre-review
 
-This text was submitted as PluginDatabase Discussion #236 on 2026-08-26. It received no maintainer reply, so the project no longer treats a separate pre-review response as a release prerequisite. This file now preserves the historical questions and records the current public evidence that will be cited in the formal submission.
+This text was submitted as PluginDatabase Discussion #236 on 2026-08-26. It received no maintainer reply. On 2026-10-26, the project decided not to submit to PluginDatabase and to continue distribution through manually installed GitHub Releases. This file is retained only as a historical record; it is not an active submission plan.
 
 ## 2026-10-25 follow-up
 
@@ -30,7 +30,7 @@ We reproduced this after a successful Starlight build by running the current dat
 plugin.json was not found. It is required for plugins to have.
 ```
 
-This question is now resolved by the current PluginDatabase pipeline: Starlight projects are selected by `millennium.toml` and packed directly. The formal submission must use the standard pinned-submodule PR and must not add a guessed legacy manifest.
+This question was later resolved by the PluginDatabase pipeline: Starlight projects are selected by `millennium.toml` and packed directly. No submission was made, and the project did not add a guessed legacy manifest.
 
 ## Question 2: controlled remote data catalog
 
@@ -52,4 +52,4 @@ Is this controlled, data-only same-repository request acceptable for PluginDatab
 - Stable-channel Windows 11 functional, failure-mode, offline/cache, uninstall and release-artifact verification
 - Published privacy/network behavior and security policy
 
-The project will not add a guessed legacy manifest. Because the separate pre-review received no response, the project will complete its own release gates and disclose the controlled remote catalog directly in the formal PluginDatabase PR. If maintainers explicitly reject that data-update model, the release configuration will set `remote_url = nil` and retain only the bundled catalog.
+The project did not add a guessed legacy manifest or open a formal PluginDatabase PR. It completed its own release gates and published `v1.0.0` through GitHub Releases. The controlled remote catalog remains documented in the repository privacy and security policies, while every package retains the full bundled catalog for offline use.

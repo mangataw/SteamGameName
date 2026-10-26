@@ -5,7 +5,7 @@
 - GitHub 仓库保存源码、人工维护词库、测试、文档和发布工作流。
 - `main` 是唯一长期分支，也是插件运行时读取词库的固定来源。
 - GitHub Releases 保存用户安装包与校验和；构建目录、缓存和本地配置不进入 Git。
-- Millennium PluginDatabase 只固定经过验证的发布提交，不直接跟随本仓库的日常更新。
+- 当前不向 Millennium PluginDatabase 提交；用户版本只通过 GitHub Releases 手动分发。
 
 ## 分支与 Pull Request
 
@@ -38,7 +38,7 @@ chore: update build tooling
 2. 发布前更新 `package.json` 与 `millennium.toml` 中的版本，并完成 `docs/PROJECT_STATUS.md` 的发布门禁。
 3. 在已推送且 CI 通过的 `main` 提交上创建带注释标签，例如 `v0.1.0`；禁止移动或复用已发布标签。
 4. 标签触发 Release 工作流，注入 GitHub Raw 词库地址，生成 ZIP 与 SHA-256 校验和。
-5. 先发布预览版并收集兼容性结果；只有真机矩阵无阻断问题时才标记稳定版并提交 Millennium PluginDatabase。
+5. 先发布预览版并收集兼容性结果；只有真机矩阵无阻断问题时才标记稳定版。稳定版继续通过 GitHub Releases 提供 ZIP 与 SHA-256，不创建 PluginDatabase 提交。
 
 ## 远程与日常同步
 
